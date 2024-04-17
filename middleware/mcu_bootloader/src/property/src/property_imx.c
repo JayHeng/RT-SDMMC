@@ -78,7 +78,6 @@ extern uint32_t __STACK_TOP[];
 ////////////////////////////////////////////////////////////////////////////////
 // Prototypes
 ////////////////////////////////////////////////////////////////////////////////
-extern status_t target_load_bootloader_config_area(bootloader_configuration_data_t *config);
 
 //! @brief Storage for property values.
 property_store_t g_propertyStore;
@@ -103,24 +102,9 @@ status_t bootloader_get_external_memory_properties(uint32_t memoryId, external_m
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 
-__WEAK status_t target_load_bootloader_config_area(bootloader_configuration_data_t *config)
-{
-    return kStatus_Fail;
-}
-
 // See property.h for documentation on this function.
 status_t bootloader_property_load_user_config(void)
 {
-    bootloader_configuration_data_t *config = &g_bootloaderContext.propertyInterface->store->configurationData;
-
-    status_t status = target_load_bootloader_config_area(config);
-    if ((status != kStatus_Success) || (config->tag != kPropertyStoreTag))
-    {
-        memset(config, 0xff, sizeof(bootloader_configuration_data_t));
-    }
-
-    // Update available peripherals based on specific chips
-    update_available_peripherals();
 
     return kStatus_Success;
 }
@@ -153,8 +137,6 @@ status_t bootloader_property_init(void)
     propertyStore->targetVersion.major = kTarget_Version_Major;
     propertyStore->targetVersion.minor = kTarget_Version_Minor;
     propertyStore->targetVersion.bugfix = kTarget_Version_Bugfix + get_bugfix_inc_ver();
-
-    propertyStore->verifyWrites = true;
 
     // Fill in reserved regions.
     //! @todo Support other tool chain
@@ -225,7 +207,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
             break;
 
         case kPropertyTag_AvailablePeripherals:
-            returnValue = &propertyStore->availablePeripherals;
             break;
 
         case kPropertyTag_RAMStartAddress:
@@ -259,11 +240,9 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
             break;
 
         case kPropertyTag_AvailableCommands:
-            returnValue = &propertyStore->availableCommands;
             break;
 
         case kPropertyTag_VerifyWrites:
-            returnValue = &propertyStore->verifyWrites;
             break;
 
         case kPropertyTag_MaxPacketSize:

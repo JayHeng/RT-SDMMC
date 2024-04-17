@@ -43,28 +43,6 @@ void shutdown_cleanup(shutdown_type_t shutdown)
         // Shutdown microseconds driver.
         microseconds_shutdown();
 
-        // Disable force ROM.
-#if defined(RCM_FM_FORCEROM_MASK)
-        RCM->FM = ((~RCM_FM_FORCEROM_MASK) & RCM->FM) | RCM_FM_FORCEROM(0);
-#elif defined(SMC_FM_FORCECFG_MASK)
-#if defined(SMC0)
-        SMC0->FM = ((~SMC_FM_FORCECFG_MASK) & SMC0->FM) | SMC_FM_FORCECFG(0);
-#else
-        SMC->FM = ((~SMC_FM_FORCECFG_MASK) & SMC->FM) | SMC_FM_FORCECFG(0);
-#endif
-#endif // defined(RCM_FM_FORCEROM_MASK)
-
-        // Clear status register (bits are w1c).
-#if defined(RCM_MR_BOOTROM_MASK)
-        RCM->MR = ((~RCM_MR_BOOTROM_MASK) & RCM->MR) | RCM_MR_BOOTROM(3);
-#elif defined(SMC_MR_BOOTCFG_MASK)
-#if defined(SMC0)
-        SMC0->MR = ((~SMC_MR_BOOTCFG_MASK) & SMC0->MR) | SMC_MR_BOOTCFG(3);
-#else
-        SMC->MR = ((~SMC_MR_BOOTCFG_MASK) & SMC->MR) | SMC_MR_BOOTCFG(3);
-#endif
-#endif // defined(RCM_MR_BOOTROM_MASK)
-
         init_interrupts();
 
         // Set the VTOR to default.

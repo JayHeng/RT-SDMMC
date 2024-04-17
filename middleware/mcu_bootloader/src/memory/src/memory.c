@@ -10,9 +10,6 @@
 #include "bl_context.h"
 #include "memory.h"
 #include "fsl_assert.h"
-#if BL_FEATURE_AES_OTP
-#include "aes_otp.h"
-#endif
 
 //! @addtogroup memif
 //! @{
@@ -138,12 +135,12 @@ status_t mem_write(uint32_t address, uint32_t length, const uint8_t *buffer, uin
         return kStatus_Success;
     }
 
-#if BL_FEATURE_EXPAND_MEMORY || BL_FEATURE_AES_OTP
+#if BL_FEATURE_EXPAND_MEMORY
     switch (GROUPID(memoryId))
     {
         case kGroup_Internal:
         {
-#endif // BL_FEATURE_EXPAND_MEMORY || BL_FEATURE_AES_OTP
+#endif // BL_FEATURE_EXPAND_MEMORY
             if (mem_is_block_reserved(address, length))
             {
                 return kStatusMemoryRangeInvalid;

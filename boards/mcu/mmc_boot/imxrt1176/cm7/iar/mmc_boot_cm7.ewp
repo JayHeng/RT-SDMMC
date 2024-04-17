@@ -240,7 +240,6 @@
                     <state>CPU_IS_ARM_CORTEX_M7=1</state>
                     <state>BL_TARGET_RAM</state>
                     <state>MIMXRT1176</state>
-                    <state>USB_STACK_BM</state>
                     <state>SDK_OS_BAREMETAL</state>
                 </option>
                 <option>
@@ -365,40 +364,23 @@
                     <state>$PROJ_DIR$/..</state>
                     <state>$PROJ_DIR$/../../../../../../devices/MIMXRT1176</state>
                     <state>$PROJ_DIR$/../../../../../../devices/MIMXRT1176/drivers</state>
-                    <state>$PROJ_DIR$/../../../../../../devices/MIMXRT1052</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/bm_usb</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/autobaud</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/bootloader</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/crc</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/include</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/memory</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/memory/src</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/startup</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/packet</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/property</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/sbloader</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/utilities</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/targets/MIMXRT1176/src</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/authentication</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/security/keyblob</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/flexspi_nor</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/flexspi</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/serial_nor_eeprom</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/sdmmc/inc</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/semc</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/nand_ecc</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/usb/device</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/usb/include</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/semc_nand</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/microseconds</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/flexspi_nand</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/ocotp</state>
                     <state>$PROJ_DIR$/../../../../../../CMSIS/Core/Include</state>
                     <state>$PROJ_DIR$/../../../../../../middleware/mcu_bootloader/src/drivers/usdhc</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/usb/output/npw/device_config/ehci</state>
-                    <state>$PROJ_DIR$/../../../../../../middleware/usb/phy</state>
                     <state>$PROJ_DIR$/../../../../../../components/osa</state>
                     <state>$PROJ_DIR$/../../../../../../components/lists</state>
                 </option>
@@ -1327,9 +1309,6 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_context.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_irq_common.h</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_shutdown_cleanup.h</name>
             </file>
             <file>
@@ -1348,15 +1327,6 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\microseconds\src\microseconds_pit.c</name>
-                </file>
-            </group>
-            <group>
-                <name>ocotp</name>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\ocotp\bl_ocotp.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\ocotp\bl_ocotp.h</name>
                 </file>
             </group>
             <group>

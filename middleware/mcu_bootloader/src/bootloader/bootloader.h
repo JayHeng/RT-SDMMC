@@ -17,35 +17,7 @@
 // Definitions
 ////////////////////////////////////////////////////////////////////////////////
 
-//! @brief Bootloader status codes.
-//! @ingroup bl_core
-enum _bootloader_status
-{
-    kStatus_UnknownCommand = MAKE_STATUS(kStatusGroup_Bootloader, 0),
-    kStatus_SecurityViolation = MAKE_STATUS(kStatusGroup_Bootloader, 1),
-    kStatus_AbortDataPhase = MAKE_STATUS(kStatusGroup_Bootloader, 2),
-    kStatus_Ping = MAKE_STATUS(kStatusGroup_Bootloader, 3),
-    kStatus_NoResponse = MAKE_STATUS(kStatusGroup_Bootloader, 4),
-    kStatus_NoResponseExpected = MAKE_STATUS(kStatusGroup_Bootloader, 5)
-};
 
-//! @brief Root of the bootloader API tree.
-//!
-//! An instance of this struct resides in read-only memory in the bootloader. It
-//! provides a user application access to APIs exported by the bootloader.
-//!
-//! @note The order of existing fields must not be changed.
-//!
-//! @ingroup context
-#if 1 // Moved into each SOC based header file in future !!!!!!!!!!!!!
-typedef struct BootloaderTree
-{
-    void (*runBootloader)(void *arg);            //!< Function to start the bootloader executing.
-    standard_version_t version;                  //!< Bootloader version number.
-    const char *copyright;                       //!< Copyright string.
-    const bootloader_context_t *runtimeContext;  //!< Pointer to the bootloader's runtime context.
-} bootloader_tree_t;
-#endif
 ////////////////////////////////////////////////////////////////////////////////
 // Prototypes
 ////////////////////////////////////////////////////////////////////////////////
