@@ -684,11 +684,11 @@
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>flashloader.srec</state>
+                    <state>mmc_boot_cm7.srec</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -727,7 +727,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>flashloader_cm7.out</state>
+                    <state>mmc_boot_cm7.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>

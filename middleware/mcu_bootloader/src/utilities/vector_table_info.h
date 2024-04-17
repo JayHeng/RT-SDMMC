@@ -24,15 +24,6 @@ enum _vector_table_address
     kDefaultVectorTableAddress = 0
 };
 
-#if (BL_TARGET_FLASH)
-//! @brief Pointer to the application vector table, which is always at the
-//! end of the bootloader region in flash.
-#define APP_VECTOR_TABLE ((uint32_t *)BL_APP_VECTOR_TABLE_ADDRESS)
-#else
-//! @brief Pointer to the bootloader vector table, which is always at address 0.
-#define APP_VECTOR_TABLE ((uint32_t *)kDefaultVectorTableAddress)
-#endif
-
 //! @brief Constants for the entries of the vector table.
 enum _vector_table_entries
 {

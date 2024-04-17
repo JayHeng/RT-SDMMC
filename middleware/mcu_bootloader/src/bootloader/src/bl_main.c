@@ -26,6 +26,10 @@
 // Prototypes
 ////////////////////////////////////////////////////////////////////////////////
 
+#define APP_EMMC_START  (0x80000)
+#define APP_EXEC_START  (0x2000)
+#define APP_LENGTH      (0x6000)
+
 static void get_user_application_entry(uint32_t *appEntry, uint32_t *appStack);
 static void jump_to_application(uint32_t applicationAddress, uint32_t stackPointer);
 
@@ -50,6 +54,7 @@ int main(void);
 //! For flash-resident and rom-resident target, gets the user application address
 //! and stack pointer from the APP_VECTOR_TABLE.
 //! Ram-resident version does not support jumping to application address.
+#define APP_VECTOR_TABLE ((uint32_t *)APP_EXEC_START)
 static void get_user_application_entry(uint32_t *appEntry, uint32_t *appStack)
 {
     assert(appEntry);
@@ -170,8 +175,6 @@ static void bootloader_init(void)
     g_bootloaderContext.propertyInterface->init();
 }
 
-uint8_t s_testBuf[0x400];
-
 static void bootloader_run(void)
 {
     status_t status = kStatus_InvalidArgument;
@@ -185,17 +188,20 @@ static void bootloader_run(void)
     status = mem_config(kMemoryMMCCard, (uint32_t *)&mmcConfig);
     if (status == kStatus_Success)
     {
-        memset(s_testBuf, 0x0, sizeof(s_testBuf));
-        
-        status = mem_read(0x8000, sizeof(s_testBuf), s_testBuf, kMemoryMMCCard);
+        status = mem_read(APP_EMMC_START, APP_LENGTH, (uint8_t *)APP_EXEC_START, kMemoryMMCCard);
         if (status == kStatus_Success)
         {
-            debug_printf("Info: emmc read test pass\r\n");
+            // Get the user application entry point and stack pointer.
+            uint32_t applicationAddress, stackPointer;
+            get_user_application_entry(&applicationAddress, &stackPointer);
+            if (is_valid_application_location(applicationAddress) && is_valid_stackpointer_location(stackPointer))
+            {
+                jump_to_application(applicationAddress, stackPointer);
+            }
             __NOP();
         }
     }
 
-  
     while (1)
     {
 
