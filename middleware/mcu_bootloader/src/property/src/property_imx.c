@@ -8,18 +8,12 @@
 #include <string.h>
 
 #include "bl_context.h"
-#include "bl_peripheral.h"
 #include "bl_version.h"
 #include "bootloader_common.h"
-#include "command_packet.h"
 #include "fsl_assert.h"
 #include "fsl_device_registers.h"
 #include "memory.h"
 #include "property.h"
-#include "serial_packet.h"
-#if BL_FEATURE_OCOTP_MODULE_FUSE_LOCKED
-#include "bl_ocotp.h"
-#endif // BL_FEATURE_OCOTP_MODULE_FUSE_LOCKED
 
 ////////////////////////////////////////////////////////////////////////////////
 // Declarations
@@ -155,11 +149,6 @@ status_t bootloader_property_init(void)
     propertyStore->bootloaderVersion.minor = kBootloader_Version_Minor;
     propertyStore->bootloaderVersion.bugfix = kBootloader_Version_Bugfix;
 
-    propertyStore->serialProtocolVersion.name = kSerialProtocol_Version_Name;
-    propertyStore->serialProtocolVersion.major = kSerialProtocol_Version_Major;
-    propertyStore->serialProtocolVersion.minor = kSerialProtocol_Version_Minor;
-    propertyStore->serialProtocolVersion.bugfix = kSerialProtocol_Version_Bugfix;
-
     propertyStore->targetVersion.name = kTarget_Version_Name;
     propertyStore->targetVersion.major = kTarget_Version_Major;
     propertyStore->targetVersion.minor = kTarget_Version_Minor;
@@ -187,18 +176,6 @@ status_t bootloader_property_init(void)
     propertyStore->reservedRegions[kProperty_FlashReservedRegionIndex].endAddress = codeEnd;
     propertyStore->reservedRegions[kProperty_RamReservedRegionIndex].startAddress = ramStart;
     propertyStore->reservedRegions[kProperty_RamReservedRegionIndex].endAddress = ramEnd;
-
-    // Fill in available peripherals array.
-    const peripheral_descriptor_t *peripherals = g_bootloaderContext.allPeripherals;
-    propertyStore->availablePeripherals = 0;
-    for (uint32_t i = 0; peripherals[i].typeMask != 0; ++i)
-    {
-        // Check that the peripheral is enabled in the user configuration data.
-        if (propertyStore->configurationData.enabledPeripherals & peripherals[i].typeMask)
-        {
-            propertyStore->availablePeripherals |= peripherals[i].typeMask;
-        }
-    }
 
 #if defined(K32H844P_SERIES)
     propertyStore->UniqueDeviceId.uid[0] = OCOTP->CFG[0].CFG;
@@ -292,10 +269,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
             break;
 
         case kPropertyTag_MaxPacketSize:
-            // Read the max packet size from the active peripheral.
-            s_propertyReturnValue = g_bootloaderContext.activePeripheral->packetInterface->getMaxPacketSize(
-                g_bootloaderContext.activePeripheral);
-            returnValue = &s_propertyReturnValue;
             break;
 
         case kPropertyTag_ReservedRegions:
@@ -334,18 +307,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
             returnSize = sizeof(propertyStore->externalMemoryPropertyStore);
             returnValue = &propertyStore->externalMemoryPropertyStore;
             break;
-#if BL_FEATURE_RELIABLE_UPDATE
-        case kPropertyTag_ReliableUpdateStatus:
-            returnValue = &propertyStore->reliableUpdateStatus;
-            break;
-#endif // BL_FEATURE_RELIABLE_UPDATE
-#if BL_FEATURE_OCOTP_MODULE_FUSE_LOCKED
-        case kPropertyTag_FuseLockedStatus:
-        {
-            ocotp_get_locked_status(OCOTP, (uint32_t **)&returnValue, &returnSize);
-            break;
-        }
-#endif // BL_FEATURE_OCOTP_MODULE_FUSE_LOCKED
         default:
             return kStatus_UnknownProperty;
     }

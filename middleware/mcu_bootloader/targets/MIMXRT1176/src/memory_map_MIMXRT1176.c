@@ -49,56 +49,12 @@ memory_map_entry_t g_memoryMap[] = {
       .memoryInterface = &g_normalMemoryInterface
     },
 
-    // FlexSPI1 AMBA memory
-    [kIndexFlexSpiNor] = {
-      .startAddress = FLEXSPI1_AMBA_START_ADDRESS,
-      .endAddress = 0, /* Flexible size which will be filled after FlexSPI1 initialization. */
-      .memoryProperty = kMemoryNotExecutable | kMemoryType_FLASH,
-      .memoryId = kMemoryFlexSpiNor,
-      .memoryInterface = &g_flexspiMemoryInterface
-    },
-
-    // M4 FlexSPI1 Alias memory. Invalid for M7.
-    [kIndexFlexSpiNorAlias] = {
-      .startAddress = M4_FLEXSPI1_ALIAS_START_ADDRESS,
-      .endAddress =
-          0, /* Flexible size which will be filled after FlexSPI1 initialization. Only filled when M4 booting. */
-      .memoryProperty = kMemoryNotExecutable | kMemoryType_FLASH,
-      .memoryId = kMemoryFlexSpiNor,
-      .memoryInterface = &g_flexspiAliasAreaInterface
-    },
-
-    // FlexSPI2 AMBA memory
-    [kIndexFlexSpiNor2] = {
-      .startAddress = FLEXSPI2_AMBA_START_ADDRESS,
-      .endAddress = 0, /* Flexible size which will be filled after FlexSPI2 initialization. */
-      .memoryProperty = kMemoryNotExecutable | kMemoryType_FLASH,
-      .memoryId = kMemoryFlexSpiNor,
-      .memoryInterface = &g_flexspiMemoryInterface
-    },
-
     // Terminator
     { 0 }
 };
 
 #if BL_FEATURE_EXPAND_MEMORY
 external_memory_map_entry_t g_externalMemoryMap[] = {
-#if BL_FEATURE_SPINAND_MODULE
-    // SPI NAND memory
-    { .memoryId = kMemorySpiNand,
-      .status = kStatus_Success,
-      .basicUnitCount = 0x10000,
-      .basicUnitSize = 2048,
-      .memoryInterface = &g_spiNandMemoryInterface },
-#endif // BL_FEATURE_SPINAND_MODULE
-#if BL_FEATURE_SPI_NOR_EEPROM_MODULE
-    // Serial NOR/EEPROM memory
-    { .memoryId = kMemorySpiNorEeprom,
-      .status = kStatus_Success,
-      .basicUnitCount = 0x10000,
-      .basicUnitSize = 256,
-      .memoryInterface = &g_spiNorEepromMemoryInterface },
-#endif // BL_FEATURE_SPI_NOR_EEPROM_MODULE
 #if BL_FEATURE_SD_MODULE
     // SD card memory
     { .memoryId = kMemorySDCard,
@@ -115,14 +71,6 @@ external_memory_map_entry_t g_externalMemoryMap[] = {
       .basicUnitSize = 512,
       .memoryInterface = &g_mmcMemoryInterface },
 #endif // BL_FEATURE_MMC_MODULE
-#if BL_FEATURE_SEMC_NAND_MODULE
-    // SEMC NAND memory
-    { .memoryId = kMemorySemcNand,
-      .status = kStatus_Success,
-      .basicUnitCount = 0x10000,
-      .basicUnitSize = 2048,
-      .memoryInterface = &g_semcNandMemoryInterface },
-#endif    // BL_FEATURE_SEMC_NAND_MODULE
     { 0 } // Terminator
 };
 #endif // #if BL_FEATURE_EXPAND_MEMORY

@@ -192,6 +192,7 @@ static void bootloader_run(void)
         if (status == kStatus_Success)
         {
             debug_printf("Info: emmc read test pass\r\n");
+            __NOP();
         }
     }
 

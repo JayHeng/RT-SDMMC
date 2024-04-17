@@ -9,16 +9,8 @@
 #include "fsl_device_registers.h"
 #include "fsl_rtos_abstraction.h"
 #include "vector_table_info.h"
-#if !BL_FEATURE_HAS_NO_INTERNAL_FLASH
-#if !BL_DEVICE_IS_LPC_SERIES
-#include "fsl_flash.h"
-#else
-#include "fsl_iap.h"
-#endif
-#endif // #if !BL_FEATURE_HAS_NO_INTERNAL_FLASH
 #include "microseconds.h"
 #include "bootloader_common.h"
-
 #include "bl_shutdown_cleanup.h"
 #include "bl_context.h"
 
@@ -36,27 +28,10 @@ void shutdown_cleanup(shutdown_type_t shutdown)
 {
     if (shutdown != kShutdownType_Reset)
     {
-        // Clear (flush) the flash cache.
-#if !BL_FEATURE_HAS_NO_INTERNAL_FLASH
-#if !BL_DEVICE_IS_LPC_SERIES
-        //flash_cache_clear(NULL);
-    FTFx_CACHE_ClearCachePrefetchSpeculation(g_bootloaderContext.allFlashCacheState, true);
-    FTFx_CACHE_ClearCachePrefetchSpeculation(g_bootloaderContext.allFlashCacheState, false);
-#endif // !BL_DEVICE_IS_LPC_SERIES
-#endif // #if !BL_FEATURE_HAS_NO_INTERNAL_FLASH
     }
 
     if (shutdown != kShutdownType_Cleanup)
     {
-        // Shutdown all peripherals because they could be active
-        uint32_t i;
-        for (i = 0; g_peripherals[i].typeMask != 0; i++)
-        {
-            if (g_peripherals[i].controlInterface->shutdown)
-            {
-                g_peripherals[i].controlInterface->shutdown(&g_peripherals[i]);
-            }
-        }
     }
 
     // If we are permanently exiting the bootloader, there are a few extra things to do.

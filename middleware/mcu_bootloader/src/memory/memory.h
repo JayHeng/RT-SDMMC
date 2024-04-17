@@ -261,23 +261,6 @@ extern external_memory_map_entry_t g_externalMemoryMap[];
 //! depending on the region of memory being accessed.
 extern const memory_interface_t g_memoryInterface;
 
-#if (BL_FLASH_TYPE_KINETIS_C90TFS_FLASH) || (BL_FLASH_TYPE_LPC_C040HD_FLASH)
-//! @brief Kinetis Main Flash memory interface.
-extern const memory_region_interface_t g_flashMemoryInterface;
-#else
-//! @brief LPC Main Flash memory interface.
-extern const memory_region_interface_t g_flashiapMemoryInterface;
-#endif
-
-#if BL_FEATURE_SUPPORT_DFLASH
-extern const memory_region_interface_t g_dFlashMemoryInterface;
-#endif
-
-#if BL_HAS_SECONDARY_INTERNAL_FLASH
-//! @brief Secondary Flash memory interface.
-extern const memory_region_interface_t g_secondaryFlashMemoryInterface;
-#endif
-
 //! @brief Memory interface for memory with Normal type.
 //!
 //! Use of multiword loads and stores is allowed with this memory type.
@@ -302,38 +285,8 @@ extern const memory_region_interface_t g_normalOCRAMInterface;
 //! This memory type does not support multiword loads and stores.
 extern const memory_region_interface_t g_deviceMemoryInterface;
 
-#if defined BL_FEATURE_QSPI_MODULE
-extern const memory_region_interface_t g_qspiMemoryInterface;
-#if BL_FEATURE_QSPI_ALIAS_AREA
-extern const memory_region_interface_t g_qspiAliasAreaInterface;
-#endif // BL_FEATURE_QSPI_ALIAS_AREA
-#endif // BL_FEATURE_QSPI_MODULE
-
-#if BL_FEATURE_FLEXSPI_NOR_MODULE
-extern const memory_region_interface_t g_flexspiMemoryInterface;
-#if BL_FEATURE_FLEXSPI_ALIAS_AREA
-extern const memory_region_interface_t g_flexspiAliasAreaInterface;
-#endif // #if BL_FEATURE_FLEXSPI_ALIAS_AREA
-#endif // #if BL_FEATURE_FLEXSPI_NOR_MODULE
-
-#if BL_FEATURE_SPIFI_NOR_MODULE
-extern const memory_region_interface_t g_spifiMemoryInterface;
-#endif // #if BL_FEATURE_SPIFI_NOR_MODULE
-
-#if BL_FEATURE_SEMC_NOR_MODULE
-extern const memory_region_interface_t g_semcNorMemoryInterface;
-#endif // #if BL_FEATURE_SEMC_NOR_MODULE
 
 #if BL_FEATURE_EXPAND_MEMORY
-#if BL_FEATURE_SPINAND_MODULE
-extern const external_memory_region_interface_t g_spiNandMemoryInterface;
-#endif // BL_FEATURE_SPINAND_MODULE
-#if BL_FEATURE_SEMC_NAND_MODULE
-extern const external_memory_region_interface_t g_semcNandMemoryInterface;
-#endif
-#if BL_FEATURE_SPI_NOR_EEPROM_MODULE
-extern const external_memory_region_interface_t g_spiNorEepromMemoryInterface;
-#endif // BL_FEATURE_SPI_NOR_EEPROM_MODULE
 #if BL_FEATURE_SD_MODULE
 extern const external_memory_region_interface_t g_sdMemoryInterface;
 #endif
@@ -408,117 +361,6 @@ extern "C"
     //! @brief Determine if all or part of block is in a reserved region.
     bool mem_is_block_reserved(uint32_t address, uint32_t length);
 
-    //@}
-
-    //! @name Flash erase operations
-    //@{
-
-    //! @brief Erase Flash memory.
-    status_t flash_mem_erase(uint32_t address, uint32_t length);
-
-#if BL_FEATURE_FAC_ERASE
-    //! @brief Erase all Flash memory or all Flash execute-only segments.
-    //!
-    //! It is only valid for non-flash resident bootloader when option is erasing execute-only segments.
-    status_t flash_mem_erase_all(flash_erase_all_option_t eraseOption);
-#else
-//! @brief Erase all Flash memory.
-//!
-//! If building for flash resident bootloader, we have to decompose the the flash erase all
-//! operation into two region erases. This allows the user to still do an erase all, but not
-//! wipe out the bootloader itself.
-status_t flash_mem_erase_all(void);
-#endif
-
-    //! @brief Erase all Flash memory (unsecure).
-    status_t flash_mem_erase_all_unsecure(void);
-
-#if BL_FEATURE_SUPPORT_DFLASH
-    //! @brief Erase all FlexNVM Flash memory.
-    status_t flexNVM_mem_erase_all(void);
-
-    //! @brief Erase all Flash memory (unsecure).
-    status_t flexNVM_mem_erase_all_unsecure(void);
-#endif // #if BL_FEATURE_SUPPORT_DFLASH
-
-    //@}
-
-    //! @name QSPI erase operation
-    //@{
-
-    //! @brief Erase all QSPI memory
-    status_t qspi_mem_erase_all(void);
-
-    //! @brief Configure QSPI memory
-    status_t configure_qspi(const uint32_t address);
-    //@}
-
-    //! @name FlexSPI NOR erase operation
-    //@{
-
-    //! @brief Config FlexSPI NOR memory
-    status_t flexspi_nor_mem_config(uint32_t *config);
-
-    //! @brief Erase all FlexSPI NOR memory
-    status_t flexspi_nor_mem_erase_all(void);
-
-    //! @brief Get Property from flexspi0 NOR Flash driver
-    status_t flexspi_nor_get_property(uint32_t whichProperty, uint32_t *value);
-
-    //! @brief Get the status of flexspi configuration
-    bool is_flexspi_nor_configured(void);
-
-    //@}
-
-    //! @name SPI NAND erase operation
-    //@{
-
-    //! @brief Erase all SPI NAND memory
-    status_t spinand_mem_erase_all(void);
-
-    //! @brief Get Property from spi NAND flash driver.
-    status_t spinand_get_property(uint32_t whichProperty, uint32_t *value);
-
-    //@}
-
-    //! @name SEMC NOR
-    //@{
-
-    //! @brief Configure SEMC NOR memory.
-    status_t semc_nor_mem_config(uint32_t *config);
-
-    //! @brief Erase all SEMC NOR memory
-    status_t semc_nor_mem_erase_all(void);
-
-    //! @brief Get Property from semc nor driver
-    status_t semc_nor_get_property(uint32_t whichProperty, uint32_t *value);
-
-    //! @brief Get the status of semc nor configuration
-    bool is_semc_nor_configured(void);
-
-    //@}
-
-    //! @name SEMC NAND erase operation
-    //@{
-
-    //! @brief Erase all SEMC NAND memory
-    status_t semc_nand_mem_erase_all(void);
-
-    //! @brief Get Property from semc nand driver
-    status_t semc_nand_get_property(uint32_t whichProperty, uint32_t *value);
-
-    //@}
-
-    //! @name SPI NOR/EEPROM
-    //@{
-
-    //! @brief  Erase all Serial NOR/EEPROM memory
-    status_t spi_nor_eeprom_mem_erase_all(void);
-
-    //! @brief Get Property from spi NOR/EEPROM flash driver.
-    status_t spi_nor_eeprom_get_property(uint32_t whichProperty, uint32_t *value);
-
-    //@}
 
     //! @name SD CARD
     //@{
@@ -536,21 +378,6 @@ status_t flash_mem_erase_all(void);
     //! @brief Get Property from MMC card driver.
     status_t mmc_get_property(uint32_t whichProperty, uint32_t *value);
 
-    //@}
-
-    //! @name SPIFI NOR erase operation
-    //@{
-
-    //! @brief Config SPIFI NOR memory
-    status_t spifi_nor_mem_config(uint32_t *config);
-
-    //! @brief Erase all SPIFI NOR memory
-    status_t spifi_nor_mem_erase_all(void);
-
-    //! @brief Get Property from spifi driver
-    status_t spifi_nor_get_property(uint32_t whichProperty, uint32_t *value);
-
-    //@}
 
 #if defined(__cplusplus)
 }

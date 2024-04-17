@@ -40,10 +40,7 @@ enum
 ////////////////////////////////////////////////////////////////////////////////
 // Prototypes
 ////////////////////////////////////////////////////////////////////////////////
-extern bool is_cm4_boot(void);
 uint32_t get_cm7_core_src(void);
-uint32_t get_cm4_core_src(void);
-uint32_t get_osc_freq(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
@@ -53,16 +50,6 @@ static inline uint32_t get_clock_div(uint32_t root, uint32_t maxFreq)
     return ((root + maxFreq - 1) / maxFreq);
 }
 
-uint32_t get_osc_freq(void)
-{
-    uint32_t oscFreq = FREQ_24MHz;
-    if (FUSE_BOOT_OSC_REF_VALUE)
-    {
-        oscFreq = FREQ_19P2MHz;
-    }
-
-    return oscFreq;
-}
 
 uint32_t get_cm7_core_src(void)
 {
@@ -73,18 +60,6 @@ uint32_t get_cm7_core_src(void)
     else
     {
         return kCm7ClockSrc_RC400M;
-    }
-}
-
-uint32_t get_cm4_core_src(void)
-{
-    if (FUSE_BOOT_FREQ_VALUE)
-    {
-        return kCm4ClockSrc_PLL_480;
-    }
-    else
-    {
-        return kCm4ClockSrc_RC400M;
     }
 }
 
@@ -108,25 +83,6 @@ void configure_clocks(bootloader_clock_option_t option)
             postDivider = 1;
         }
 
-        if (is_cm4_boot())
-        {
-            uint32_t clockToSwitch;
-            uint32_t cm4ClockDiv;
-            if (get_cm4_core_src() == kCm4ClockSrc_RC400M)
-            {
-                clockToSwitch = FREQ_400MHz;
-                cm4ClockDiv = get_clock_div(clockToSwitch, kMaxFreq_M4) * postDivider;
-                CCM->CLOCK_ROOT[kCLOCK_Root_Lpuart1].CONTROL = CCM_CLOCK_ROOT_CONTROL_DIV(4) | CCM_CLOCK_ROOT_CONTROL_MUX(2);
-            }
-            else
-            {
-                clockToSwitch = FREQ_480MHz;
-                cm4ClockDiv = get_clock_div(clockToSwitch, kMaxFreq_M4) * postDivider;
-                CCM->CLOCK_ROOT[kCLOCK_Root_Lpuart1].CONTROL = CCM_CLOCK_ROOT_CONTROL_DIV(2) | CCM_CLOCK_ROOT_CONTROL_MUX(4);
-            }
-            SystemCoreClock = clockToSwitch / cm4ClockDiv;
-        }
-        else
         {
             if (get_cm7_core_src() == kCm7ClockSrc_RC400M)
             {
@@ -151,137 +107,10 @@ void configure_clocks(bootloader_clock_option_t option)
     }
 }
 
-#define USBPHY_PLL_DIV_SEL_20 3
-#define USBPHY_PLL_DIV_SEL_25 5
-bool usb_clock_init(void)
-{
-    USB_OTG1->USBCMD |= USBHS_USBCMD_RST_MASK;
-
-    // Clear PHY from reset
-    USBPHY1->CTRL_CLR = USBPHY_CTRL_SFTRST_MASK;
-    // clear UTMI CLKGATE
-    USBPHY1->CTRL &= ~USBPHY_CTRL_CLKGATE_MASK;
-    USBPHY1->CTRL |= USBPHY_CTRL_ENUTMILEVEL2_MASK | USBPHY_CTRL_ENUTMILEVEL3_MASK;
-
-    USBPHY1->CTRL |= USBPHY_CTRL_ENAUTOCLR_CLKGATE_MASK | USBPHY_CTRL_ENAUTOCLR_PHY_PWD_MASK;
-
-    // Enable regulator
-    USBPHY1->PLL_SIC |= USBPHY_PLL_SIC_PLL_REG_ENABLE_MASK;
-
-    // FUSE_BOOT_OSC_REF_VALUE = 1'b0, 24 MHz input clock with default divid by 20
-    // FUSE_BOOT_OSC_REF_VALUE = 1'b1, 19.2 MHz input clock with default divid by 25
-    uint32_t pllSicVal = (USBPHY1->PLL_SIC & ~USBPHY_PLL_SIC_PLL_DIV_SEL_MASK);
-    if (get_osc_freq() == FREQ_24MHz)
-    {
-        pllSicVal |= USBPHY_PLL_SIC_PLL_DIV_SEL(USBPHY_PLL_DIV_SEL_20);
-    }
-    else
-    {
-        pllSicVal |= USBPHY_PLL_SIC_PLL_DIV_SEL(USBPHY_PLL_DIV_SEL_25);
-    }
-    USBPHY1->PLL_SIC = pllSicVal;
-    debug_printf("USBPHY1->PLL_SIC = %x\n", USBPHY1->PLL_SIC);
-
-    // Enable the power
-    USBPHY1->PLL_SIC |= USBPHY_PLL_SIC_PLL_POWER_MASK | USBPHY_PLL_SIC_PLL_ENABLE_MASK;
-    // Wait for PLL lock
-    microseconds_delay(100);
-
-    // Enable usb clocks
-    USBPHY1->PLL_SIC |= USBPHY_PLL_SIC_PLL_EN_USB_CLKS_MASK;
-    // Clear bypass bit
-    USBPHY1->PLL_SIC_CLR = USBPHY_PLL_SIC_PLL_BYPASS_MASK;
-
-    // clear UTMI CLKGATE, to run the clocks
-    USBPHY1->CTRL &= ~USBPHY_CTRL_CLKGATE_MASK;
-    // Set to normal mode
-    USBPHY1->PWD = 0;
-
-    USB_OTG1->USBCMD &= (uint32_t)~USBHS_USBCMD_RS_MASK;
-
-    return true;
-}
-
 // Get OCOTP clock
 uint32_t get_ocotp_clock(void)
 {
     return get_bus_clock();
-}
-
-//!@brief Configure axi clock for SEMC peripheral
-void semc_axi_clock_config(semc_clk_freq_t freq)
-{
-    uint8_t mux;
-    uint8_t div;
-
-    // Select the clk source
-    switch (freq)
-    {
-        case kSemcClkFreq_33MHz:
-            // MUX = 5 --> PLL_528   528MHz
-            // DIV = 16    528 / 16 = 33MHz
-            mux = 5;
-            div = 16;
-            break;
-        case kSemcClkFreq_40MHz:
-            // MUX = 6 --> PLL_528_PFD1   594MHz
-            // DIV = 15    594 / 15 = 39.6MHz
-            mux = 6;
-            div = 15;
-            break;
-        case kSemcClkFreq_50MHz:
-            // MUX = 6 --> PLL_528_PFD1   594MHz
-            // DIV = 12   594 / 12 = 49.5MHz
-            mux = 6;
-            div = 12;
-            break;
-        case kSemcClkFreq_108MHz:
-            // MUX = 5 --> PLL_528   528MHz
-            // DIV = 5   528 / 5 = 105.6MHz
-            mux = 5;
-            div = 5;
-            break;
-        case kSemcClkFreq_133MHz:
-            // MUX = 7 --> PLL_480_PFD0   664.62MHz
-            // DIV = 5   664.62 / 5 = 132.9MHz
-            mux = 7;
-            div = 5;
-            break;
-        case kSemcClkFreq_166MHz:
-            // MUX = 7 --> PLL_480_PFD0   664.62MHz
-            // DIV = 4   664.62 / 4 = 166.1MHz
-            mux = 7;
-            div = 4;
-            break;
-        case kSemcClkFreq_200MHz:
-            // MUX = 6 --> PLL_528_PFD1   594MHz
-            // DIV = 3   594 / 3 = 198MHz
-            mux = 6;
-            div = 3;
-            break;
-        case kSemcClkFreq_66MHz:
-        default:
-            // MUX = 5 --> PLL_528   528MHz
-            // DIV = 8   528 / 8 = 66MHz
-            mux = 5;
-            div = 8;
-            break;
-    }
-
-    CCM->CLOCK_ROOT[kCLOCK_Root_Semc].CONTROL =
-        CCM_CLOCK_ROOT_CONTROL_DIV(div - 1) | CCM_CLOCK_ROOT_CONTROL_MUX(mux);
-}
-
-//!@brief Gate on the clock for the SEMC peripheral
-void semc_clock_gate_enable(void)
-{
-    CCM->LPCG[kCLOCK_Semc].DIRECT = 1;
-}
-
-//!@brief Gate off the clock the SEMC peripheral
-void semc_clock_gate_disable(void)
-{
-    CCM->LPCG[kCLOCK_Semc].DIRECT = 0;
 }
 
 uint32_t get_bus_clock(void)
@@ -336,11 +165,6 @@ uint32_t get_uart_clock(uint32_t instance)
     uint32_t lpuart_clock = 0;
     lpuart_clock = 80 * FREQ_1MHz; // 80MHz;
     return lpuart_clock;
-}
-
-void spi_clock_gate_enable(uint32_t instance)
-{
-    // Note: This function is no longer needed, empty function is created to satisfy the memory interface
 }
 
 ////////////////////////////////////////////////////////////////////////////////
