@@ -1214,12 +1214,6 @@
             <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1176\drivers\fsl_iomuxc.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1176\drivers\fsl_lpspi.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1176\drivers\fsl_lpspi.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1176\drivers\fsl_lpuart.c</name>
         </file>
         <file>
@@ -1234,18 +1228,9 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1176\drivers\fsl_pmu.h</name>
         </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1176\drivers\fsl_puf.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1176\drivers\fsl_puf.h</name>
-        </file>
     </group>
     <group>
         <name>MIMXRT1176</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT1176\src\bl_mpu.h</name>
-        </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT1176\src\bootloader_config.h</name>
         </file>
@@ -1310,9 +1295,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_shutdown_cleanup.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_version.h</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bootloader.h</name>

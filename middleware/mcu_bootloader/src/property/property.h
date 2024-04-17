@@ -78,43 +78,6 @@ enum _property_constants
     kProperty_FlashVersionIdSizeInBytes = 8,
 };
 
-//! @brief Bit positions for clock flags in configuration data.
-enum _clock_flags
-{
-    kClockFlag_HighSpeed = (1 << 0)
-};
-
-//! @brief Bit positions for boot flags in configuration data
-enum _boot_flags
-{
-    kBootFlag_DirectBoot = (1 << 0)
-};
-
-//! @brief Flash constants.
-enum _flash_constants
-{
-    //! @brief The bootloader configuration data location .
-    //!
-    //! A User Application should populate a BootloaderConfigurationData
-    //! struct at 0x3c0 from the beginning of the application image which must
-    //! be the User Application vector table for the flash-resident bootloader
-    //! collaboration.
-    kBootloaderConfigAreaAddress = (uint32_t)(APP_VECTOR_TABLE) + 0x3c0,
-#if defined(FSL_FEATURE_FLASH_HAS_MULTIPLE_FLASH) || defined(FSL_FEATURE_FLASH_PFLASH_1_START_ADDRESS)
-#if BL_FEATURE_SUPPORT_DFLASH
-    kFLASHCount = 3,
-#else
-    kFLASHCount = 2,
-#endif // BL_FEATURE_SUPPORT_DFLASH
-#else
-#if BL_FEATURE_SUPPORT_DFLASH
-    kFLASHCount = 2,
-#else
-    kFLASHCount = 1,
-#endif // BL_FEATURE_SUPPORT_DFLASH
-#endif
-};
-
 //! @brief Structure of a reserved regions entry.
 typedef struct ReservedRegion
 {
@@ -170,21 +133,12 @@ enum _ram_constants
 //! @brief Structure of property store.
 typedef struct PropertyStore
 {
-    standard_version_t bootloaderVersion;     //!< Current bootloader version.
-    standard_version_t targetVersion;         //!< Target version number.
     uint32_t ramStartAddress[kRAMCount];   //!< Start address of RAM
     uint32_t ramSizeInBytes[kRAMCount];    //!< Size in bytes of RAM
     unique_device_id_t UniqueDeviceId;             //!< Unique identification for the device.
     reserved_region_t reservedRegions[kProperty_ReservedRegionsCount]; //!< Flash and Ram reserved regions.
     external_memory_property_store_t externalMemoryPropertyStore; //!< Property store for external memory
-
 } property_store_t;
-
-enum _property_store_tags
-{
-    //! @brief Tag value used to validate the bootloader configuration data.
-    kPropertyStoreTag = FOUR_CHAR_CODE('k', 'c', 'f', 'g')
-};
 
 //! @brief External Memory properties interface
 typedef struct ExternalMemoryPropertyInterface
@@ -196,7 +150,6 @@ typedef struct ExternalMemoryPropertyInterface
 //! @brief Interface to property operations.
 typedef struct PropertyInterface
 {
-    status_t (*load_user_config)(void); //!< Load the user configuration data
     status_t (*init)(void);             //!< Initialize
     status_t (*get)(uint8_t tag, uint32_t id, const void **value, uint32_t *valueSize); //!< Get property
     status_t (*set_uint32)(uint8_t tag, uint32_t value);                                //!< Set uint32_t property
@@ -221,9 +174,6 @@ extern "C"
 
     //! @name Property Store
     //@{
-
-    //! @brief Early initialization function to get user configuration data
-    status_t bootloader_property_load_user_config(void);
 
     //! @brief Initialize the property store.
     status_t bootloader_property_init(void);

@@ -7,7 +7,6 @@
  */
 
 #include "bl_context.h"
-#include "bl_mpu.h"
 #include "memory.h"
 #include "memory_config.h"
 

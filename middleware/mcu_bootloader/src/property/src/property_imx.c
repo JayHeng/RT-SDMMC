@@ -8,7 +8,6 @@
 #include <string.h>
 
 #include "bl_context.h"
-#include "bl_version.h"
 #include "bootloader_common.h"
 #include "fsl_assert.h"
 #include "fsl_device_registers.h"
@@ -85,7 +84,7 @@ property_store_t g_propertyStore;
 extern const external_memory_property_interface_t g_externalMemPropertyInterfaceMap[];
 
 // See property.h for documentation on this data structure.
-const property_interface_t g_propertyInterface = { bootloader_property_load_user_config, bootloader_property_init,
+const property_interface_t g_propertyInterface = { bootloader_property_init,
                                                    bootloader_property_get, bootloader_property_set_uint32,
                                                    &g_propertyStore };
 
@@ -103,40 +102,9 @@ status_t bootloader_get_external_memory_properties(uint32_t memoryId, external_m
 ////////////////////////////////////////////////////////////////////////////////
 
 // See property.h for documentation on this function.
-status_t bootloader_property_load_user_config(void)
-{
-
-    return kStatus_Success;
-}
-
-// Get bugfix incremental version
-static int get_bugfix_inc_ver(void)
-{
-#ifdef BUGFIX_INC_VER_RETRIEVER
-    static const uint32_t retriever[] = BUGFIX_INC_VER_RETRIEVER;
-    return ((int (*)())(((size_t)retriever) | 0x1))() + 1;
-#else
-    return 0;
-#endif
-}
-
-// See property.h for documentation on this function.
 status_t bootloader_property_init(void)
 {
-    bootloader_property_load_user_config();
-
     property_store_t *propertyStore = g_bootloaderContext.propertyInterface->store;
-
-    // Fill in default values.
-    propertyStore->bootloaderVersion.name = kBootloader_Version_Name;
-    propertyStore->bootloaderVersion.major = kBootloader_Version_Major;
-    propertyStore->bootloaderVersion.minor = kBootloader_Version_Minor;
-    propertyStore->bootloaderVersion.bugfix = kBootloader_Version_Bugfix;
-
-    propertyStore->targetVersion.name = kTarget_Version_Name;
-    propertyStore->targetVersion.major = kTarget_Version_Major;
-    propertyStore->targetVersion.minor = kTarget_Version_Minor;
-    propertyStore->targetVersion.bugfix = kTarget_Version_Bugfix + get_bugfix_inc_ver();
 
     // Fill in reserved regions.
     //! @todo Support other tool chain
@@ -157,10 +125,7 @@ status_t bootloader_property_init(void)
     propertyStore->reservedRegions[kProperty_RamReservedRegionIndex].startAddress = ramStart;
     propertyStore->reservedRegions[kProperty_RamReservedRegionIndex].endAddress = ramEnd;
 
-#if defined(K32H844P_SERIES)
-    propertyStore->UniqueDeviceId.uid[0] = OCOTP->CFG[0].CFG;
-    propertyStore->UniqueDeviceId.uid[1] = OCOTP->CFG[1].CFG;
-#elif defined(MIMXRT1176_cm4_SERIES) || defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm4_SERIES) || \
+#if defined(MIMXRT1176_cm4_SERIES) || defined(MIMXRT1176_cm7_SERIES) || defined(MIMXRT1166_cm4_SERIES) || \
     defined(MIMXRT1166_cm7_SERIES)
     propertyStore->UniqueDeviceId.uid[0] = OCOTP->FUSEN[16].FUSE;
     propertyStore->UniqueDeviceId.uid[1] = OCOTP->FUSEN[17].FUSE;
@@ -172,8 +137,7 @@ status_t bootloader_property_init(void)
 #else
     propertyStore->UniqueDeviceId.uid[0] = OCOTP->CFG0;
     propertyStore->UniqueDeviceId.uid[1] = OCOTP->CFG1;
-#endif // K32H844P_SERIES
-
+#endif
 
     // Set address range of RAM in property interface
     const memory_map_entry_t *map = (memory_map_entry_t *)&g_bootloaderContext.memoryMap[kIndexITCM];
@@ -202,13 +166,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
     const void *returnValue;
     switch (tag)
     {
-        case kPropertyTag_BootloaderVersion:
-            returnValue = &propertyStore->bootloaderVersion.version;
-            break;
-
-        case kPropertyTag_AvailablePeripherals:
-            break;
-
         case kPropertyTag_RAMStartAddress:
 #if CPU_IS_ARM_CORTEX_M7
             if (id >= kRAMCount)
@@ -239,15 +196,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
 #endif // CPU_IS_ARM_CORTEX_M7
             break;
 
-        case kPropertyTag_AvailableCommands:
-            break;
-
-        case kPropertyTag_VerifyWrites:
-            break;
-
-        case kPropertyTag_MaxPacketSize:
-            break;
-
         case kPropertyTag_ReservedRegions:
             returnSize = sizeof(propertyStore->reservedRegions);
             returnValue = propertyStore->reservedRegions;
@@ -269,9 +217,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
             returnValue = &propertyStore->UniqueDeviceId;
             break;
 
-        case kPropertyTag_TargetVersion:
-            returnValue = &propertyStore->targetVersion.version;
-            break;
         case kPropertyTag_ExternalMemoryAttributes:
         {
             status_t status =

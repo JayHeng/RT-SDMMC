@@ -10,7 +10,6 @@
 
 #include "bootloader_common.h"
 #include "bl_context.h"
-#include "bl_version.h"
 #include "bl_shutdown_cleanup.h"
 
 ////////////////////////////////////////////////////////////////////////////////
