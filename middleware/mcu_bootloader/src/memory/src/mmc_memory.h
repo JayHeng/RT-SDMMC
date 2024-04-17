@@ -19,6 +19,54 @@
 /*******************************************************************************
  * Definitons
  ******************************************************************************/
+
+/*! @brief Configuration structure used for MMC memory. */
+typedef struct _mmc_config
+{
+    union
+    {
+        struct
+        {
+            uint32_t boot_config_enable : 1;
+            uint32_t rsv0 : 1;
+            uint32_t boot_ack : 1;
+            uint32_t reset_boot_bus_conditions : 1;
+            uint32_t boot_mode : 2;
+            uint32_t rsv1 : 2;
+            uint32_t bus_width : 4;
+            uint32_t timing_interface : 4;
+            uint32_t boot_bus_width : 2;
+            uint32_t rsv2 : 2;
+            uint32_t boot_partition_enable : 3;
+            uint32_t rsv3 : 1;
+            uint32_t partition_access : 3;
+            uint32_t rsv4 : 1;
+            uint32_t tag : 4;
+        } B;
+        uint32_t U;
+    } word0;
+
+    union
+    {
+        struct
+        {
+            uint32_t instance : 4;
+            uint32_t rsv_perm_config_enable : 2;
+            uint32_t rsv0 : 10;
+            uint32_t rsv_perm_boot_config_prot : 2;
+            uint32_t enable1V8 : 1;
+            uint32_t enablePowerCycle : 1;
+            uint32_t powerUpTime : 1;
+            uint32_t rsv1 : 2;
+            uint32_t powerPolarity : 1;
+            uint32_t powerDownTime : 2;
+            uint32_t rsv2 : 2;
+            uint32_t rsv_driver_strength : 4;
+        } B;
+        uint32_t U;
+    } word1;
+} mmc_config_t;
+
 /*! @brief Context structure used for MMC memory. */
 typedef struct _mmc_mem_context
 {

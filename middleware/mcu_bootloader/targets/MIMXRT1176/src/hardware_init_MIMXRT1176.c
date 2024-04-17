@@ -391,13 +391,11 @@ void init_hardware(void)
 
     // Update memory map according to actual Fuse definitions
     update_memory_map();
-
-    CLOCK_EnableClock(kCLOCK_Usb);
 }
 
 void deinit_hardware(void)
 {
-    CLOCK_DisableClock(kCLOCK_Usb);
+
 }
 
 //!@brief Get the hab status.
