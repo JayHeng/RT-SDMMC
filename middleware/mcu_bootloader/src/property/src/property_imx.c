@@ -156,8 +156,6 @@ status_t bootloader_property_init(void)
 
     propertyStore->verifyWrites = true;
 
-    propertyStore->availableCommands = kAvailableCommands;
-
     // Fill in reserved regions.
     //! @todo Support other tool chain
 

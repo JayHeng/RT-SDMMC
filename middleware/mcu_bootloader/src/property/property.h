@@ -12,7 +12,6 @@
 #include <stdint.h>
 
 #include "bootloader_common.h"
-#include "command_packet.h"
 #include "fsl_device_registers.h"
 #include "vector_table_info.h"
 
@@ -34,67 +33,6 @@
 //! availability mask.
 #define IS_CMD_AVAILABLE(mask, tag) (((mask)&HAS_CMD(tag)) != 0)
 
-enum _available_commands
-{
-    kAvailableCommands = (
-#if !BL_FEATURE_MIN_PROFILE
-        HAS_CMD(kCommandTag_FlashEraseAll) | HAS_CMD(kCommandTag_FlashEraseRegion) | HAS_CMD(kCommandTag_WriteMemory)
-#if BL_FEATURE_FLASH_SECURITY
-        | HAS_CMD(kCommandTag_FlashSecurityDisable)
-#endif // BL_FEATURE_ERASEALL_UNSECURE
-        | HAS_CMD(kCommandTag_GetProperty) | HAS_CMD(kCommandTag_Execute) | HAS_CMD(kCommandTag_Reset) |
-        HAS_CMD(kCommandTag_SetProperty) | HAS_CMD(kCommandTag_ReadMemory) | HAS_CMD(kCommandTag_FillMemory) |
-        HAS_CMD(kCommandTag_ReceiveSbFile) | HAS_CMD(kCommandTag_Call)
-#if BL_FEATURE_ERASEALL_UNSECURE
-        | HAS_CMD(kCommandTag_FlashEraseAllUnsecure)
-#endif // BL_FEATURE_ERASEALL_UNSECURE
-#if (((!BL_FEATURE_HAS_NO_INTERNAL_FLASH) || BL_FEATURE_OCOTP_MODULE) && (!BL_DEVICE_IS_LPC_SERIES)) || \
-    ((BL_DEVICE_IS_LPC_SERIES) && defined(OTP_API))
-        | HAS_CMD(kCommandTag_FlashReadOnce) | HAS_CMD(kCommandTag_FlashProgramOnce)
-#endif // (((!BL_FEATURE_HAS_NO_INTERNAL_FLASH) || BL_FEATURE_OCOTP_MODULE) && (!BL_DEVICE_IS_LPC_SERIES))||
-       // ((BL_DEVICE_IS_LPC_SERIES) && defined(OTP_API))
-#if !BL_FEATURE_HAS_NO_READ_SOURCE
-        | HAS_CMD(kCommandTag_FlashReadResource)
-#endif // !BL_FEATURE_HAS_NO_READ_SOURCE
-#if BL_FEATURE_QSPI_MODULE || BL_FEATURE_FLEXSPI_NOR_MODULE || BL_FEATURE_SEMC_NOR_MODULE || \
-    BL_FEATURE_EXPAND_MEMORY || BL_FEATURE_SPI_NOR_EEPROM_MODULE || BL_FEATURE_SPIFI_NOR_MODULE
-        | HAS_CMD(kCommandTag_ConfigureMemory)
-#endif // BL_FEATURE_QSPI_MODULE || BL_FEATURE_FLEXSPI_NOR_MODULE || BL_FEATURE_SEMC_NOR_MODULE ||
-       // BL_FEATURE_EXPAND_MEMORY || BL_FEATURE_SPI_NOR_EEPROM_MODULE || BL_FEATURE_SPIFI_NOR_MODULE
-#if BL_FEATURE_RELIABLE_UPDATE
-        | HAS_CMD(kCommandTag_ReliableUpdate)
-#endif // BL_FEATURE_RELIABLE_UPDATE
-#if BL_FEATURE_GEN_KEYBLOB
-        | HAS_CMD(kCommandTag_GenerateKeyBlob)
-#endif // BL_FEATURE_GEN_KEYBLOB
-#if BL_FEATURE_KEY_PROVISIONING
-        | HAS_CMD(kCommandTag_KeyProvisioning)
-#endif
-#else // BL_FEATURE_MIN_PROFILE
-        HAS_CMD(kCommandTag_FlashEraseAll) | HAS_CMD(kCommandTag_FlashEraseRegion) | HAS_CMD(kCommandTag_WriteMemory)
-#if BL_FEATURE_FLASH_SECURITY
-        | HAS_CMD(kCommandTag_FlashSecurityDisable)
-#endif // BL_FEATURE_FLASH_SECURITY
-        | HAS_CMD(kCommandTag_GetProperty) | HAS_CMD(kCommandTag_Execute) | HAS_CMD(kCommandTag_Reset) |
-        HAS_CMD(kCommandTag_SetProperty)
-#if BL_FEATURE_READ_MEMORY
-        | HAS_CMD(kCommandTag_ReadMemory)
-#endif // BL_FEATURE_READ_MEMORY
-#if BL_FEATURE_FILL_MEMORY
-        | HAS_CMD(kCommandTag_FillMemory)
-#endif // BL_FEATURE_FILL_MEMORY
-#if BL_FEATURE_ERASEALL_UNSECURE
-        | HAS_CMD(kCommandTag_FlashEraseAllUnsecure)
-#endif // BL_FEATURE_ERASEALL_UNSECURE
-#if BL_FEATURE_LIFECYCLE_UPDATE
-        | HAS_CMD(kCommandTag_LifeCycleUpdate)
-#endif // BL_FEATURE_LIFECYCLE_UPDATE
-#if BL_FEATURE_EDGELOCK_MODULE
-        | HAS_CMD(KCommandTag_EleMessage)
-#endif // BL_FEATURE_EDGELOCK_MODULE
-#endif // BL_FEATURE_MIN_PROFILE
-            )
-};
 
 //@}
 

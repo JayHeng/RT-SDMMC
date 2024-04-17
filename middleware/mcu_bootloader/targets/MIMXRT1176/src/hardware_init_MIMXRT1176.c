@@ -6,11 +6,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "bl_semc.h"
 #include "fusemap.h"
 #include "memory_config.h"
-#include "peripherals_pinmux.h"
-#include "spi_nor_eeprom_memory.h"
+#include "memory.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 /*******************************************************************************

@@ -9,7 +9,6 @@
 #include "fsl_clock.h"
 #include "microseconds.h"
 #include "property.h"
-#include "bl_semc.h"
 #include "fusemap.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions

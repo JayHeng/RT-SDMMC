@@ -9,7 +9,6 @@
 #define exit exit_default
 #include <stdbool.h>
 #include "bl_context.h"
-#include "bl_peripheral.h"
 #include "bl_shutdown_cleanup.h"
 #include "bootloader.h"
 #include "bootloader_common.h"

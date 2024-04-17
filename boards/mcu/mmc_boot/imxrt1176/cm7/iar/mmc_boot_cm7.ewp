@@ -1131,15 +1131,6 @@
         </settings>
     </configuration>
     <group>
-        <name>board</name>
-        <file>
-            <name>$PROJ_DIR$\..\pin_mux.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\pin_mux.h</name>
-        </file>
-    </group>
-    <group>
         <name>CMSIS</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\CMSIS\Core\Include\cachel1_armv7.h</name>
@@ -1295,6 +1286,9 @@
             <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT1176\src\memory_map_MIMXRT1176.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT1176\src\peripherals_pinmux.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT1176\src\sdmmc_config_MIMXRT1176.c</name>
         </file>
         <file>
@@ -1343,21 +1337,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bootloader.h</name>
-            </file>
-        </group>
-        <group>
-            <name>crc</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\crc\src\crc16.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\crc\crc16.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\crc\src\crc32.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\middleware\mcu_bootloader\src\crc\crc32.h</name>
             </file>
         </group>
         <group>
