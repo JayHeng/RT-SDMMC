@@ -24,33 +24,16 @@ memory_map_entry_t g_memoryMap[] = {
     { 0x20000000, 0x2001ffff, kMemoryIsExecutable | kMemoryType_RAM, kMemoryInternal, &g_normalMemoryInterface },
     // OCRAM (256KB)
     { 0x20200000, 0x2023ffff, kMemoryIsExecutable | kMemoryType_RAM, kMemoryInternal, &g_normalMemoryInterface },
-#if BL_FEATURE_FLEXSPI_NOR_MODULE
-    // FlexSPI1 AMBA memory
-    { 0x60000000, 0x6fffffff, kMemoryNotExecutable | kMemoryType_FLASH, kMemoryFlexSpiNor, &g_flexspiMemoryInterface },
-#endif // #if BL_FEATURE_FLEXSPI_NOR_MODULE
-#if BL_FEATURE_SEMC_NOR_MODULE
-    // SEMC memory
-    { 0x90000000, 0x1000000, kMemoryNotExecutable | kMemoryType_FLASH, kMemorySemcNor, &g_semcNorMemoryInterface },
-#endif // #if BL_FEATURE_SEMC_NOR_MODULE
     // Terminator
     { 0 }
 };
 
 external_memory_map_entry_t g_externalMemoryMap[] = {
-#if BL_FEATURE_SPINAND_MODULE
-    { kMemorySpiNand, 0, 0x10000, 2048, &g_spiNandMemoryInterface }, // SPI NAND memory
-#endif                                                               // BL_FEATURE_SPINAND_MODULE
-#if BL_FEATURE_SPI_NOR_EEPROM_MODULE
-    { kMemorySpiNorEeprom, 0, 0x10000, 256, &g_spiNorEepromMemoryInterface }, // Serial NOR/EEPROM memory
-#endif                                                                        // BL_FEATURE_SPI_NOR_EEPROM_MODULE
 #if BL_FEATURE_SD_MODULE
     { kMemorySDCard, 0, 0, 512, &g_sdMemoryInterface }, // SD card memory
 #endif
 #if BL_FEATURE_MMC_MODULE
     { kMemoryMMCCard, 0, 0, 512, &g_mmcMemoryInterface }, // MMC card memory
-#endif
-#if BL_FEATURE_SEMC_NAND_MODULE
-    { kMemorySemcNand, 0, 0x10000, 2048, &g_semcNandMemoryInterface }, // SEMC NAND memory
 #endif
     { 0 } // Terminator
 };
