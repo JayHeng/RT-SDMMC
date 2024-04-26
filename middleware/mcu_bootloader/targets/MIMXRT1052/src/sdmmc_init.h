@@ -13,6 +13,9 @@
 #include "fsl_port.h"
 #endif
 #include "bootloader_common.h"
+#include "fsl_sdmmc_common.h"
+#include "fsl_sdmmc_host.h"
+#include "fsl_sdmmc_spec.h"
 
 /******************************************************************************
  * Definitions.
@@ -106,114 +109,16 @@ void usdhc_vselect_init(USDHC_Type *base);
 ////////////////////////////////////////////////////////////////////////////////
 // Board Definitions
 ////////////////////////////////////////////////////////////////////////////////
-#if BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE == 1
-#define BOARD_MMC_HOST_BASEADDR BOARD_USDHC1_BASEADDR
-#define BOARD_MMC_HOST_CLK_FREQ BOARD_USDHC1_CLK_FREQ
-#define BOARD_MMC_CMD_IOMUXC BOARD_USDHC1_CMD_IOMUXC
-#define BOARD_MMC_CLK_IOMUXC BOARD_USDHC1_CLK_IOMUXC
-#define BOARD_MMC_DATA0_IOMUXC BOARD_USDHC1_DATA0_IOMUXC
-#define BOARD_MMC_DATA1_IOMUXC BOARD_USDHC1_DATA1_IOMUXC
-#define BOARD_MMC_DATA2_IOMUXC BOARD_USDHC1_DATA2_IOMUXC
-#define BOARD_MMC_DATA3_IOMUXC BOARD_USDHC1_DATA3_IOMUXC
-#define BOARD_MMC_DATA4_IOMUXC BOARD_USDHC1_DATA4_IOMUXC
-#define BOARD_MMC_DATA5_IOMUXC BOARD_USDHC1_DATA5_IOMUXC
-#define BOARD_MMC_DATA6_IOMUXC BOARD_USDHC1_DATA6_IOMUXC
-#define BOARD_MMC_DATA7_IOMUXC BOARD_USDHC1_DATA7_IOMUXC
-#define BOARD_MMC_VSELECT_IOMUXC BOARD_USDHC1_VSELECT_IOMUXC
-#define BOARD_MMC_RESET_B_GPIO_BASE BOARD_USDHC1_RESET_B_GPIO_BASE
-#define BOARD_MMC_RESET_B_GPIO_PIN BOARD_USDHC1_RESET_B_GPIO_PIN
-#define BOARD_MMC_RESET_B_GPIO_IOMUXC BOARD_USDHC1_RESET_B_GPIO_IOMUXC
-#elif BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE == 2
-#define BOARD_MMC_HOST_BASEADDR BOARD_USDHC2_BASEADDR
-#define BOARD_MMC_HOST_CLK_FREQ BOARD_USDHC2_CLK_FREQ
-#define BOARD_MMC_CMD_IOMUXC BOARD_USDHC2_CMD_IOMUXC
-#define BOARD_MMC_CLK_IOMUXC BOARD_USDHC2_CLK_IOMUXC
-#define BOARD_MMC_DATA0_IOMUXC BOARD_USDHC2_DATA0_IOMUXC
-#define BOARD_MMC_DATA1_IOMUXC BOARD_USDHC2_DATA1_IOMUXC
-#define BOARD_MMC_DATA2_IOMUXC BOARD_USDHC2_DATA2_IOMUXC
-#define BOARD_MMC_DATA3_IOMUXC BOARD_USDHC2_DATA3_IOMUXC
-#define BOARD_MMC_DATA4_IOMUXC BOARD_USDHC2_DATA4_IOMUXC
-#define BOARD_MMC_DATA5_IOMUXC BOARD_USDHC2_DATA5_IOMUXC
-#define BOARD_MMC_DATA6_IOMUXC BOARD_USDHC2_DATA6_IOMUXC
-#define BOARD_MMC_DATA7_IOMUXC BOARD_USDHC2_DATA7_IOMUXC
-#define BOARD_MMC_VSELECT_IOMUXC BOARD_USDHC2_VSELECT_IOMUXC
-#define BOARD_MMC_RESET_B_GPIO_BASE BOARD_USDHC2_RESET_B_GPIO_BASE
-#define BOARD_MMC_RESET_B_GPIO_PIN BOARD_USDHC2_RESET_B_GPIO_PIN
-#define BOARD_MMC_RESET_B_GPIO_IOMUXC BOARD_USDHC2_RESET_B_GPIO_IOMUXC
-#else
-#define BOARD_MMC_HOST_BASEADDR
-#define BOARD_MMC_HOST_CLK_FREQ
-#define BOARD_MMC_CMD_IOMUXC
-#define BOARD_MMC_CLK_IOMUXC
-#define BOARD_MMC_DATA0_IOMUXC
-#define BOARD_MMC_DATA1_IOMUXC
-#define BOARD_MMC_DATA2_IOMUXC
-#define BOARD_MMC_DATA3_IOMUXC
-#define BOARD_MMC_DATA4_IOMUXC
-#define BOARD_MMC_DATA5_IOMUXC
-#define BOARD_MMC_DATA6_IOMUXC
-#define BOARD_MMC_DATA7_IOMUXC
-#define BOARD_MMC_VSELECT_IOMUXC
-#define BOARD_MMC_RESET_B_GPIO_BASE
-#define BOARD_MMC_RESET_B_GPIO_PIN
-#define BOARD_MMC_RESET_B_GPIO_IOMUXC
-#endif
-
-/*! @brief SD board-level definition. */
-#if BL_FEATURE_SD_MODULE_PERIPHERAL_INSTANCE == 1
-#define BOARD_SD_HOST_BASEADDR BOARD_USDHC1_BASEADDR
-#define BOARD_SD_HOST_CLK_FREQ BOARD_USDHC1_CLK_FREQ
-#define BOARD_SD_CD_GPIO_BASE BOARD_USDHC1_CD_GPIO_BASE
-#define BOARD_SD_CD_GPIO_PIN BOARD_USDHC1_CD_GPIO_PIN
-#define BOARD_SD_CD_GPIO_IOMUXC BOARD_USDHC1_CD_GPIO_IOMUXC
-#define BOARD_SD_CMD_IOMUXC BOARD_USDHC1_CMD_IOMUXC
-#define BOARD_SD_CLK_IOMUXC BOARD_USDHC1_CLK_IOMUXC
-#define BOARD_SD_DATA0_IOMUXC BOARD_USDHC1_DATA0_IOMUXC
-#define BOARD_SD_DATA1_IOMUXC BOARD_USDHC1_DATA1_IOMUXC
-#define BOARD_SD_DATA2_IOMUXC BOARD_USDHC1_DATA2_IOMUXC
-#define BOARD_SD_DATA3_IOMUXC BOARD_USDHC1_DATA3_IOMUXC
-#define BOARD_SD_VSELECT_IOMUXC BOARD_USDHC1_VSELECT_IOMUXC
-#define BOARD_SD_RESET_B_GPIO_BASE BOARD_USDHC1_RESET_B_GPIO_BASE
-#define BOARD_SD_RESET_B_GPIO_PIN BOARD_USDHC1_RESET_B_GPIO_PIN
-#define BOARD_SD_RESET_B_GPIO_IOMUXC BOARD_USDHC1_RESET_B_GPIO_IOMUXC
-#elif BL_FEATURE_SD_MODULE_PERIPHERAL_INSTANCE == 2
-#define BOARD_SD_HOST_BASEADDR BOARD_USDHC2_BASEADDR
-#define BOARD_SD_HOST_CLK_FREQ BOARD_USDHC2_CLK_FREQ
-#define BOARD_SD_CD_GPIO_BASE BOARD_USDHC2_CD_GPIO_BASE
-#define BOARD_SD_CD_GPIO_PIN BOARD_USDHC2_CD_GPIO_PIN
-#define BOARD_SD_CD_GPIO_IOMUXC BOARD_USDHC2_CD_GPIO_IOMUXC
-#define BOARD_SD_CMD_IOMUXC BOARD_USDHC2_CMD_IOMUXC
-#define BOARD_SD_CLK_IOMUXC BOARD_USDHC2_CLK_IOMUXC
-#define BOARD_SD_DATA0_IOMUXC BOARD_USDHC2_DATA0_IOMUXC
-#define BOARD_SD_DATA1_IOMUXC BOARD_USDHC2_DATA1_IOMUXC
-#define BOARD_SD_DATA2_IOMUXC BOARD_USDHC2_DATA2_IOMUXC
-#define BOARD_SD_DATA3_IOMUXC BOARD_USDHC2_DATA3_IOMUXC
-#define BOARD_SD_VSELECT_IOMUXC BOARD_USDHC2_VSELECT_IOMUXC
-#define BOARD_SD_RESET_B_GPIO_BASE BOARD_USDHC2_RESET_B_GPIO_BASE
-#define BOARD_SD_RESET_B_GPIO_PIN BOARD_USDHC2_RESET_B_GPIO_PIN
-#define BOARD_SD_RESET_B_GPIO_IOMUXC BOARD_USDHC2_RESET_B_GPIO_IOMUXC
-#else
-#define BOARD_SD_HOST_BASEADDR
-#define BOARD_SD_HOST_CLK_FREQ
-#define BOARD_SD_CD_GPIO_BASE
-#define BOARD_SD_CD_GPIO_PIN
-#define BOARD_SD_CD_GPIO_IOMUXC
-#define BOARD_SD_CMD_IOMUXC
-#define BOARD_SD_CLK_IOMUXC
-#define BOARD_SD_DATA0_IOMUXC
-#define BOARD_SD_DATA1_IOMUXC
-#define BOARD_SD_DATA2_IOMUXC
-#define BOARD_SD_DATA3_IOMUXC
-#define BOARD_SD_VSELECT_IOMUXC
-#define BOARD_SD_RESET_B_GPIO_BASE
-#define BOARD_SD_RESET_B_GPIO_PIN
-#define BOARD_SD_RESET_B_GPIO_IOMUXC
-#endif
 
 #define BOARD_SD_SUPPORT_180V (BL_FEATURE_SD_MODULE_SUPPORT_1V8)
 ////////////////////////////////////////////////////////////////////////////////
 // Board FUNC Definitions
 ////////////////////////////////////////////////////////////////////////////////
+
+extern void mmc_pinmux_config(USDHC_Type *base, mmc_data_bus_width_t busWidth);
+extern void mmc_io_update(USDHC_Type *base, mmc_data_bus_width_t busWidth, uint32_t speed, uint32_t strength);
+extern void sd_pinmux_config(USDHC_Type *base, sd_data_bus_width_t busWidth);
+extern void sd_io_update(USDHC_Type *base, sd_data_bus_width_t busWidth, uint32_t speed, uint32_t strength);
 
 #if BL_FEATURE_SD_MODULE
 
@@ -228,97 +133,12 @@ void usdhc_vselect_init(USDHC_Type *base);
 /*! @brief SD power enable/disable function. */
 #define BOARD_USDHC_SDCARD_POWER_CONTROL(state)
 
-#define BOARD_SD_MUX_CONFIG(base, busWidth)                                                               \
-    {                                                                                                     \
-        switch (busWidth)                                                                                 \
-        {                                                                                                 \
-            case kSD_DataBusWidth4Bit:                                                                    \
-                IOMUXC_SetPinMux(BOARD_SD_DATA1_IOMUXC, false);                                           \
-                IOMUXC_SetPinMux(BOARD_SD_DATA2_IOMUXC, false);                                           \
-                IOMUXC_SetPinMux(BOARD_SD_DATA3_IOMUXC, false);                                           \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA1_IOMUXC,                                                \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA2_IOMUXC,                                                \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA3_IOMUXC,                                                \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-            case kSD_DataBusWidth1Bit:                                                                    \
-                IOMUXC_SetPinMux(BOARD_SD_CMD_IOMUXC, true);                                              \
-                IOMUXC_SetPinMux(BOARD_SD_CLK_IOMUXC, false);                                             \
-                IOMUXC_SetPinMux(BOARD_SD_DATA0_IOMUXC, false);                                           \
-                IOMUXC_SetPinConfig(BOARD_SD_CMD_IOMUXC,                                                  \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_SD_CLK_IOMUXC,                                                  \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(1) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA0_IOMUXC,                                                \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-        }                                                                                                 \
-    }
+#define BOARD_SD_MUX_CONFIG(base, busWidth)  sd_pinmux_config(base, busWidth)
 
 #define BOARD_SD_PIN_CONFIG(speed, strength)
 
 /* define for SD config IO driver strength dynamic */
-#define BOARD_SD_IO_UPDATE(base, busWidth, speed, strength)                                                 \
-    {                                                                                                       \
-        switch (busWidth)                                                                                   \
-        {                                                                                                   \
-            case kSD_DataBusWidth4Bit:                                                                      \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA1_IOMUXC,                                                  \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA2_IOMUXC,                                                  \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA3_IOMUXC,                                                  \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-            case kSD_DataBusWidth1Bit:                                                                      \
-                IOMUXC_SetPinConfig(BOARD_SD_CMD_IOMUXC,                                                    \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_SD_CLK_IOMUXC,                                                    \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_SD_DATA0_IOMUXC,                                                  \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-        }                                                                                                   \
-    }
-#else
-#define BOARD_USDHC_SDCARD_POWER_CONTROL_INIT()
-#define BOARD_USDHC_SDCARD_POWER_CONTROL(state)
-#define BOARD_USDHC_SDCARD_VSELECT_INIT()
-#define BOARD_SD_MUX_CONFIG(base, busWidth)
-#define BOARD_SD_PIN_CONFIG(speed, strength)
-#define BOARD_SD_IO_UPDATE(base, busWidth, speed, strength)
+#define BOARD_SD_IO_UPDATE(base, busWidth, speed, strength) 
 #endif
 
 #if BL_FEATURE_MMC_MODULE
@@ -334,148 +154,11 @@ void usdhc_vselect_init(USDHC_Type *base);
 /*! @brief MMC power enable/disable function. */
 #define BOARD_USDHC_MMCCARD_POWER_CONTROL(state)
 
-#define BOARD_MMC_MUX_CONFIG(base, busWidth)                                                              \
-    {                                                                                                     \
-        switch (busWidth)                                                                                 \
-        {                                                                                                 \
-            case kMMC_DataBusWidth8bitDDR:                                                                \
-            case kMMC_DataBusWidth8bit:                                                                   \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA4_IOMUXC, false);                                          \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA5_IOMUXC, false);                                          \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA6_IOMUXC, false);                                          \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA7_IOMUXC, false);                                          \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA4_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA5_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA6_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA7_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-            case kMMC_DataBusWidth4bitDDR:                                                                \
-            case kMMC_DataBusWidth4bit:                                                                   \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA1_IOMUXC, false);                                          \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA2_IOMUXC, false);                                          \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA3_IOMUXC, false);                                          \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA1_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA2_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA3_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-            case kMMC_DataBusWidth1bit:                                                                   \
-            default:                                                                                      \
-                IOMUXC_SetPinMux(BOARD_MMC_CMD_IOMUXC, true);                                             \
-                IOMUXC_SetPinMux(BOARD_MMC_CLK_IOMUXC, false);                                            \
-                IOMUXC_SetPinMux(BOARD_MMC_DATA0_IOMUXC, false);                                          \
-                IOMUXC_SetPinConfig(BOARD_MMC_CMD_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-                IOMUXC_SetPinConfig(BOARD_MMC_CLK_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(1) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(4));                                    \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA0_IOMUXC,                                               \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |     \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK | \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(2) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(1));                                    \
-        }                                                                                                 \
-    }
+#define BOARD_MMC_MUX_CONFIG(base, busWidth) mmc_pinmux_config(base, busWidth)
 
 #define BOARD_MMC_PIN_CONFIG(speed, strength)
 /* define for MMC config IO driver strength dynamic */
-#define BOARD_MMC_IO_UPDATE(base, busWidth, speed, strength)                                                \
-    {                                                                                                       \
-        switch (busWidth)                                                                                   \
-        {                                                                                                   \
-            case kMMC_DataBusWidth8bitDDR:                                                                  \
-            case kMMC_DataBusWidth8bit:                                                                     \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA4_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA5_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA6_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA7_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-            case kMMC_DataBusWidth4bitDDR:                                                                  \
-            case kMMC_DataBusWidth4bit:                                                                     \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA1_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA2_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA3_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-            case kMMC_DataBusWidth1bit:                                                                     \
-            default:                                                                                        \
-                IOMUXC_SetPinConfig(BOARD_MMC_CMD_IOMUXC,                                                   \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_MMC_CLK_IOMUXC,                                                   \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-                IOMUXC_SetPinConfig(BOARD_MMC_DATA0_IOMUXC,                                                 \
-                                    IOMUXC_SW_PAD_CTL_PAD_SRE_MASK | IOMUXC_SW_PAD_CTL_PAD_PKE_MASK |       \
-                                        IOMUXC_SW_PAD_CTL_PAD_PUE_MASK | IOMUXC_SW_PAD_CTL_PAD_HYS_MASK |   \
-                                        IOMUXC_SW_PAD_CTL_PAD_SPEED(speed) | IOMUXC_SW_PAD_CTL_PAD_PUS(1) | \
-                                        IOMUXC_SW_PAD_CTL_PAD_DSE(strength));                               \
-        }                                                                                                   \
-    }
-#else
-#define BOARD_USDHC_MMCCARD_POWER_CONTROL_INIT()
-#define BOARD_USDHC_MMCCARD_POWER_CONTROL(state)
-#define BOARD_USDHC_MMCCARD_VSELECT_INIT()
-#define BOARD_MMC_MUX_CONFIG(base, busWidth)
-#define BOARD_MMC_PIN_CONFIG(speed, strength)
-#define BOARD_MMC_IO_UPDATE(base, busWidth, speed, strength)
+#define BOARD_MMC_IO_UPDATE(base, busWidth, speed, strength) 
 #endif
 
 #endif // __SDMMC_INIT_H__

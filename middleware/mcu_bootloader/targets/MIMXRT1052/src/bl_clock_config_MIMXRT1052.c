@@ -145,23 +145,9 @@ void clock_setup(void)
                  CCM_CBCDR_SEMC_PODF(ahb_divider - 1) | CCM_CBCDR_AHB_PODF(clock_divider - 1) |
                  CCM_CBCDR_IPG_PODF(ahb_divider - 1);
 
-    // LPUART clock configuration, peripheral clock 20MHz
-    CCM->CSCDR1 =
-        (CCM->CSCDR1 & (~(CCM_CSCDR1_UART_CLK_SEL_MASK | CCM_CSCDR1_UART_CLK_PODF_MASK))) | CCM_CSCDR1_UART_CLK_PODF(3);
-
     // Pre-peripheral clock configuration
     CCM->CBCMR = (CCM->CBCMR & (~CCM_CBCMR_PRE_PERIPH_CLK_SEL_MASK)) | CCM_CBCMR_PRE_PERIPH_CLK_SEL(3);
 
-    // LPSPI clock configuration, Peripheral clock: 41MHz
-    CCM->CBCMR = (CCM->CBCMR & (~(CCM_CBCMR_LPSPI_CLK_SEL_MASK | CCM_CBCMR_LPSPI_PODF_MASK))) |
-                 CCM_CBCMR_LPSPI_CLK_SEL(0) | CCM_CBCMR_LPSPI_PODF(5);
-
-    // FLEXSPI clock configuration, safe frequency: 30MHz
-    CCM->CSCMR1 = ((CCM->CSCMR1 & ~(CCM_CSCMR1_FLEXSPI_CLK_SEL_MASK | CCM_CSCMR1_FLEXSPI_PODF_MASK |
-                                    CCM_CSCMR1_PERCLK_PODF_MASK | CCM_CSCMR1_PERCLK_CLK_SEL_MASK)) |
-                   CCM_CSCMR1_FLEXSPI_CLK_SEL(3) | CCM_CSCMR1_FLEXSPI_PODF(7) | CCM_CSCMR1_PERCLK_PODF(1));
-
-    // NOTE: SEMC clock configuration needs handshake, so it will be handled by SEMC driver itself
     // uSDHC1&2 clock configuration
     // SEL: PULLL2 PFD0; DIV: 1 (PFD/2, freq=200MHz)
     CCM->CSCMR1 = (CCM->CSCMR1 & (~(CCM_CSCMR1_USDHC1_CLK_SEL_MASK | CCM_CSCMR1_USDHC2_CLK_SEL_MASK))) |
