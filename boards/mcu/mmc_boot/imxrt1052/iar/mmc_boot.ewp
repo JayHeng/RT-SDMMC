@@ -726,7 +726,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>flashloader.out</state>
+                    <state>mmc_boot.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
