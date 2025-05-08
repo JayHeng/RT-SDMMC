@@ -11,18 +11,6 @@
 #include "property.h"
 
 const external_memory_property_interface_t g_externalMemPropertyInterfaceMap[] = {
-#if BL_FEATURE_FLEXSPI_NOR_MODULE
-    { kMemoryFlexSpiNor, flexspi_nor_get_property },
-#endif // #if BL_FEATURE_FLEXSPI_NOR_MODULE
-#if BL_FEATURE_SPINAND_MODULE
-    { kMemorySpiNand, spinand_get_property },
-#endif // #if BL_FEATURE_SPINAND_MODULE
-#if BL_FEATURE_SEMC_NAND_MODULE
-    { kMemorySemcNand, semc_nand_get_property },
-#endif // #if BL_FEATURE_SEMC_NAND_MODULE
-#if BL_FEATURE_SPI_NOR_EEPROM_MODULE
-    { kMemorySpiNorEeprom, spi_nor_eeprom_get_property },
-#endif
 #if BL_FEATURE_SD_MODULE
     { kMemorySDCard, sd_get_property }, // SD card memory
 #endif

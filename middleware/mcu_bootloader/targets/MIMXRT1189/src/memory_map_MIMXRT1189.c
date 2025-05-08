@@ -75,60 +75,12 @@ memory_map_entry_t g_memoryMap[] = {
       .memoryId = kMemoryInternal,
       .memoryInterface = &g_normalMemoryInterface },
 
-    // FlexSPI1
-    { .startAddress = FLEXSPI1_START_ADDRESS,
-      /* Flexible size which will be filled after FlexSPI1 initialization. */
-      .endAddress = FLEXSPI1_END_ADDRESS,
-      .memoryProperty = kMemoryNotExecutable,
-      .memoryId = kMemoryFlexSpiNor,
-      .memoryInterface = &g_flexspiMemoryInterface },
-
-    // FlexSPI1 NS
-    { .startAddress = FLEXSPI1_NS_START_ADDRESS,
-      /* Flexible size which will be filled after FlexSPI1 initialization. */
-      .endAddress = FLEXSPI1_NS_END_ADDRESS,
-      .memoryProperty = kMemoryNotExecutable,
-      .memoryId = kMemoryFlexSpiNor,
-      .memoryInterface = &g_flexspiMemoryInterface },
-
-    // FlexSPI1 Alias
-    { .startAddress = FLEXSPI1_ALIAS_START_ADDRESS,
-      /* Flexible size which will be filled after FlexSPI1 initialization. */
-      .endAddress = FLEXSPI1_ALIAS_END_ADDRESS,
-      .memoryProperty = kMemoryNotExecutable,
-      .memoryId = kMemoryFlexSpiNor,
-      .memoryInterface = &g_flexspiAliasAreaInterface },
-
-    // FlexSPI1 Alias NS
-    { .startAddress = FLEXSPI1_NS_ALIAS_START_ADDRESS,
-      /* Flexible size which will be filled after FlexSPI1 initialization. */
-      .endAddress = FLEXSPI1_NS_ALIAS_END_ADDRESS,
-      .memoryProperty = kMemoryNotExecutable,
-      .memoryId = kMemoryFlexSpiNor,
-      .memoryInterface = &g_flexspiAliasAreaInterface },
-
     // Terminator
     { 0 }
 };
 
 #if BL_FEATURE_EXPAND_MEMORY
 external_memory_map_entry_t g_externalMemoryMap[] = {
-#if BL_FEATURE_SPINAND_MODULE
-    // SPI NAND memory
-    { .memoryId = kMemorySpiNand,
-      .status = kStatus_Success,
-      .basicUnitCount = 0x10000,
-      .basicUnitSize = 2048,
-      .memoryInterface = &g_spiNandMemoryInterface },
-#endif // BL_FEATURE_SPINAND_MODULE
-#if BL_FEATURE_SPI_NOR_EEPROM_MODULE
-    // Serial NOR/EEPROM memory
-    { .memoryId = kMemorySpiNorEeprom,
-      .status = kStatus_Success,
-      .basicUnitCount = 0x10000,
-      .basicUnitSize = 256,
-      .memoryInterface = &g_spiNorEepromMemoryInterface },
-#endif // BL_FEATURE_SPI_NOR_EEPROM_MODULE
 #if BL_FEATURE_SD_MODULE
     // SD card memory
     { .memoryId = kMemorySDCard,
@@ -145,14 +97,6 @@ external_memory_map_entry_t g_externalMemoryMap[] = {
       .basicUnitSize = 512,
       .memoryInterface = &g_mmcMemoryInterface },
 #endif // BL_FEATURE_MMC_MODULE
-#if BL_FEATURE_SEMC_NAND_MODULE
-    // SEMC NAND memory
-    { .memoryId = kMemorySemcNand,
-      .status = kStatus_Success,
-      .basicUnitCount = 0x10000,
-      .basicUnitSize = 2048,
-      .memoryInterface = &g_semcNandMemoryInterface },
-#endif    // BL_FEATURE_SEMC_NAND_MODULE
     { 0 } // Terminator
 };
 #endif // #if BL_FEATURE_EXPAND_MEMORY

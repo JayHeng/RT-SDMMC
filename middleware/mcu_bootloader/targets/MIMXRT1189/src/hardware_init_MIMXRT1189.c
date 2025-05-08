@@ -6,7 +6,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "bl_semc.h"
 #include "bootloader.h"
 #include "fsl_iomuxc.h"
 #include "fusemap.h"
@@ -29,134 +28,6 @@ static void update_memory_map(void);
 /*******************************************************************************
  * Codes
  ******************************************************************************/
-//!@brief Configure IOMUX for SEMC Peripheral
-void semc_iomux_config(semc_mem_config_t *config)
-{
-    uint8_t cePortOutputSelection;
-
-    // Pinmux configuration for SEMC DA[15:0] Port (NOR)
-    // Pinmux configuration for SEMC D[15:0] Port (NAND)
-    IOMUXC_SetPinMux(SEMC_DATA00_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_DATA01_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_DATA02_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_DATA03_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_DATA04_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_DATA05_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_DATA06_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_DATA07_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinConfig(SEMC_DATA00_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_DATA01_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_DATA02_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_DATA03_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_DATA04_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_DATA05_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_DATA06_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_DATA07_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-
-    if (
-#if BL_FEATURE_SEMC_NOR_MODULE
-        (config->deviceMemType == kSemcDeviceMemType_NOR) ||
-#endif
-#if BL_FEATURE_SEMC_NAND_MODULE
-        ((config->deviceMemType == kSemcDeviceMemType_NAND) && (config->nandMemConfig.ioPortWidth == 16u)) ||
-#endif
-        0 /* dummy condition */
-    )
-    {
-        IOMUXC_SetPinMux(SEMC_DATA08_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_DATA09_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_DATA10_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_DATA11_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_DATA12_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_DATA13_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_DATA14_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_DATA15_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinConfig(SEMC_DATA08_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_DATA09_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_DATA10_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_DATA11_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_DATA12_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_DATA13_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_DATA14_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_DATA15_IOMUXC_MUX_FUNC, SEMC_DATA_PAD_CTRL);
-    }
-
-    // Pinmux configuration for SEMC WE,OE,ADV Port (NOR)
-    // Pinmux configuration for SEMC WE,RE,ALE Port (NAND)
-    IOMUXC_SetPinMux(SEMC_ADDR11_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_ADDR12_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinMux(SEMC_BA1_IOMUXC_MUX_FUNC, 0U);
-    IOMUXC_SetPinConfig(SEMC_ADDR11_IOMUXC_MUX_FUNC, SEMC_WE_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_ADDR12_IOMUXC_MUX_FUNC, SEMC_RE_PAD_CTRL);
-    IOMUXC_SetPinConfig(SEMC_BA1_IOMUXC_MUX_FUNC, SEMC_ALE_PAD_CTRL);
-
-#if BL_FEATURE_SEMC_NOR_MODULE
-    if (config->deviceMemType == kSemcDeviceMemType_NOR)
-    {
-        IOMUXC_SetPinMux(SEMC_ADDR00_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR01_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR02_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR03_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR04_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR05_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR06_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR07_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinConfig(SEMC_ADDR00_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR01_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR02_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR03_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR04_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR05_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR06_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR07_IOMUXC_MUX_FUNC, SEMC_ADDR_PAD_CTRL);
-
-        cePortOutputSelection = config->norMemConfig.cePortOutputSelection;
-    }
-    else
-#endif // #if BL_FEATURE_SEMC_NOR_MODULE
-#if BL_FEATURE_SEMC_NAND_MODULE
-        if (config->deviceMemType == kSemcDeviceMemType_NAND)
-    {
-        // Pinmux configuration for SEMC CLE,R/B Port (NAND)
-        IOMUXC_SetPinMux(SEMC_RDY_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinMux(SEMC_ADDR09_IOMUXC_MUX_FUNC, 0U);
-        IOMUXC_SetPinConfig(SEMC_RDY_IOMUXC_MUX_FUNC, SEMC_RB_PAD_CTRL);
-        IOMUXC_SetPinConfig(SEMC_ADDR09_IOMUXC_MUX_FUNC, SEMC_CLE_PAD_CTRL);
-
-        cePortOutputSelection = config->nandMemConfig.cePortOutputSelection;
-    }
-    else
-#endif
-    {
-        cePortOutputSelection = kSemcCeOutputSelection_MUX_CSX0; // Use the default CS0
-    }
-
-    // Pinmux configuration for SEMC CE Port (NAND/NOR)
-    switch (cePortOutputSelection)
-    {
-        case kSemcCeOutputSelection_MUX_A8:
-            IOMUXC_SetPinMux(SEMC_CSXA8_IOMUXC_MUX_FUNC, 0U);
-            IOMUXC_SetPinConfig(SEMC_CSXA8_IOMUXC_MUX_FUNC, SEMC_CSX_PAD_CTRL);
-            break;
-        case kSemcCeOutputSelection_MUX_CSX3:
-            IOMUXC_SetPinMux(SEMC_CSX1_IOMUXC_MUX_FUNC, 0U);
-            IOMUXC_SetPinConfig(SEMC_CSX1_IOMUXC_MUX_FUNC, SEMC_CSX_PAD_CTRL);
-            break;
-        case kSemcCeOutputSelection_MUX_CSX2:
-            IOMUXC_SetPinMux(SEMC_CSX2_IOMUXC_MUX_FUNC, 0U);
-            IOMUXC_SetPinConfig(SEMC_CSX2_IOMUXC_MUX_FUNC, SEMC_CSX_PAD_CTRL);
-            break;
-        case kSemcCeOutputSelection_MUX_CSX1:
-            IOMUXC_SetPinMux(SEMC_CSX3_IOMUXC_MUX_FUNC, 0U);
-            IOMUXC_SetPinConfig(SEMC_CSX3_IOMUXC_MUX_FUNC, SEMC_CSX_PAD_CTRL);
-            break;
-        default:
-        case kSemcCeOutputSelection_MUX_CSX0:
-            IOMUXC_SetPinMux(SEMC_CSX0_IOMUXC_MUX_FUNC, 0U);
-            IOMUXC_SetPinConfig(SEMC_CSX0_IOMUXC_MUX_FUNC, SEMC_CSX_PAD_CTRL);
-            break;
-    }
-}
 
 bool is_boot_pin_asserted(void)
 {
@@ -248,15 +119,11 @@ void init_hardware(void)
 
     // Update memory map according to actual Fuse definitions
     update_memory_map();
-
-    EDGELOCK_Init(SxMU);
-
-    CLOCK_EnableClock(kCLOCK_Usb);
 }
 
 void deinit_hardware(void)
 {
-    CLOCK_DisableClock(kCLOCK_Usb);
+
 }
 
 void update_memory_map(void)
