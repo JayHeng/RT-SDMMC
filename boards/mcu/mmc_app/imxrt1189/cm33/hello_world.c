@@ -21,27 +21,58 @@
  * Prototypes
  ******************************************************************************/
 
+
+/*******************************************************************************
+ * Variables
+ ******************************************************************************/
+volatile uint32_t g_systickCounter;
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
+void SysTick_Handler(void)
+{
+    if (g_systickCounter != 0U)
+    {
+        g_systickCounter--;
+    }
+}
+
+void SysTick_DelayTicks(uint32_t n)
+{
+    g_systickCounter = n;
+    while (g_systickCounter != 0U)
+    {
+    }
+}
+
 /*!
  * @brief Main function
  */
 int main(void)
 {
-    char ch;
-
     /* Init board hardware. */
     BOARD_ConfigMPU();
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitDebugConsole();
+    /* Update the core clock */
+    SystemCoreClockUpdate();
+
+    /* Set systick reload value to generate 1ms interrupt */
+    if (SysTick_Config(SystemCoreClock / 1000U))
+    {
+        while (1)
+        {
+        }
+    }
 
     PRINTF("hello world.\r\n");
 
     while (1)
     {
-        ch = GETCHAR();
-        PUTCHAR(ch);
+        /* Delay 1000 ms */
+        SysTick_DelayTicks(1000U);
+        RGPIO_TogglePinsOutput(RGPIO4, 1UL << 27U);
     }
 }

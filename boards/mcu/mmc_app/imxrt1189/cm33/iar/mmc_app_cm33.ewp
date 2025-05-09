@@ -17,7 +17,7 @@
                 <option>
                     <name>OG_32_64DeviceCoreSlave</name>
                     <version>34</version>
-                    <state>38</state>
+                    <state>61</state>
                 </option>
                 <option>
                     <name>BrowseInfoPath</name>
@@ -67,7 +67,7 @@
                 </option>
                 <option>
                     <name>RTDescription</name>
-                    <state>0</state>
+                    <state>A compact configuration of the C/C++14 runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
                 </option>
                 <option>
                     <name>OGProductVersion</name>
@@ -75,7 +75,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>9.30.1.48832</state>
+                    <state>9.60.2.5384</state>
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
@@ -104,7 +104,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>34</version>
-                    <state>58</state>
+                    <state>61</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -121,7 +121,7 @@
                 <option>
                     <name>CoreVariant</name>
                     <version>34</version>
-                    <state>58</state>
+                    <state>61</state>
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
@@ -144,7 +144,7 @@
                 <option>
                     <name>GFPUCoreSlave2</name>
                     <version>34</version>
-                    <state>58</state>
+                    <state>61</state>
                 </option>
                 <option>
                     <name>OGCMSISPackSelectDevice</name>
@@ -1028,7 +1028,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>mmc_app_cm33_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>
@@ -11293,12 +11293,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\..\devices\MIMXRT1189\system_MIMXRT1189_cm33.h</name>
-        </file>
-    </group>
-    <group>
-        <name>doc</name>
-        <file>
-            <name>$PROJ_DIR$\..\readme.md</name>
         </file>
     </group>
     <group>
