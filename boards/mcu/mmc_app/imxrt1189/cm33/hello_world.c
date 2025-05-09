@@ -73,6 +73,9 @@ int main(void)
     {
         /* Delay 1000 ms */
         SysTick_DelayTicks(1000U);
+        // LED D6 on EVK
         RGPIO_TogglePinsOutput(RGPIO4, 1UL << 27U);
+        // LED D31 on EVB-C
+        RGPIO_TogglePinsOutput(RGPIO4, 1UL << 21U);
     }
 }

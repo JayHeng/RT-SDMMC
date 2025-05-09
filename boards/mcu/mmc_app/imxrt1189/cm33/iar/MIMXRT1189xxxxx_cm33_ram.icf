@@ -23,8 +23,8 @@
 
 /* Board memory map */
 
-define symbol m_code_tcm_start         = 0x0FFE0000;
-define symbol m_code_tcm_size          = 0x00020000;
+define symbol m_code_tcm_start         = 0x0FFE3000;
+define symbol m_code_tcm_size          = 0x0001D000;
 
 define symbol m_system_tcm_start       = 0x20000000;
 define symbol m_system_tcm_size        = 0x00020000;
