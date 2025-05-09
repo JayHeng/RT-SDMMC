@@ -1,0 +1,388 @@
+/* 
+ *Start of Flash
+ */
+/*iMXRT1180 FlexSPI macro*/
+__param option0 = 0xC0000007;
+__param option1 = 0x00000000;
+__param initFlexSPI = 0x0;
+__param _flexspi = 1;
+
+__var _rom_api_p;
+__var _flexspiNorDriver_p;
+__var _flash_get_info;
+__var _flash_init;
+__var _option_p;
+__var _flashConfig_p;
+
+_init(opt0, opt1)
+{
+    __var tmp;
+
+    tmp = __readMemory32(0xE000ED00,"Memory") >> 4;
+
+    if(0xC27 == (tmp & 0xFFF))
+    {/*M7*/
+        _rom_api_p = 0x11F000;
+    }
+    else
+    {/*M33*/
+        _rom_api_p = __readMemory32(0x1000001C,"Memory");
+    }
+
+    _flexspiNorDriver_p = __readMemory32(_rom_api_p+0x0c,"Memory");
+    _flash_get_info = __readMemory32(_flexspiNorDriver_p+0x24,"Memory");
+    _flash_init =     __readMemory32(_flexspiNorDriver_p+0x4,"Memory");
+    _option_p = 0x2048C008;
+    _flashConfig_p = 0x2048C010;
+
+    __writeMemory32(opt0,_option_p,"Memory");
+    __writeMemory32(opt1,_option_p+4,"Memory");
+
+    //call code at 0x2048C000
+    __writeMemory32(0xE7FE47a8, 0x2048C000,"Memory"); //BLX R5
+                                                      //B.
+}
+
+_callAPI(fun, param0, param1, param2, param3)
+{
+#R0 = param0; //
+#R1 = param1; //
+#R2 = param2; //
+#R3 = param3; //
+    /*code start address*/
+#R5 = fun;     //
+
+#PC = 0x2048C000;  //
+#SP = 0x20490000;
+
+    __var tmp;
+
+    tmp = __readMemory32(0xE000ED00,"Memory") >> 4;
+
+    if(0xC27 != (tmp & 0xFFF))
+    {/*M33*/
+#SPLIM = 0;
+    }
+
+#xPSR &= ~0x0600FC00;
+
+    if(0 > __hwRunToBreakpoint(0x2048C002,5))
+    {
+        __message "API Call Failed";
+    }
+}
+
+_FlexSPI_init()
+{
+    //  /*Enable ROM and FLEXSPI Clocks and release the resets*/
+    //  __writeMemory32((1<<1)|(1<<10), 0x40000220, "Memory");
+    //  __writeMemory32((1<<1)|(1<<10), 0x40000140, "Memory");
+    //  /*Enable IOCON, GPIO0, and GPIO1 Clocks and release the resets*/
+    //  __writeMemory32((1<<13)|(1<<14)|(1<<15), 0x40000220, "Memory");
+    //  __writeMemory32((1<<13)|(1<<14)|(1<<15), 0x40000140, "Memory");
+
+    _init(option0, option1);
+    _callAPI(_flash_get_info,_flexspi,_flashConfig_p, _option_p, 0);
+    if(0 != #R0)
+    {
+        __message "Flex SPI initialization failed";
+    }
+    else
+    {
+        _callAPI(_flash_init,_flexspi,_flashConfig_p, 0, 0);
+        if(0 != #R0)
+        {
+            __message "Flex SPI initialization failed";
+        }
+    }
+}
+
+/* 
+ *Start of HyperRAM
+ */
+_Flexspi_reset()
+{
+    __var reg;
+    reg = __readMemory32(0x445E0000, "Memory");
+    __writeMemory32((reg | 0x1), 0x445E0000, "Memory");   
+    do
+    {
+        reg = __readMemory32(0x445E0000, "Memory");
+    }while((reg & 0x1) != 0); 
+}
+
+_FLEXSPI_BusIdle()
+{
+    __var reg;
+    do
+    {
+        reg = __readMemory32(0x445E00E0, "Memory");
+    }while((reg & 0x3) != 0x3); 
+}
+
+_InitSysPll3()
+{
+    __var reg;
+
+    // ANADIG_PLL_PLL3_CTRL
+    reg = __readMemory32(0x44484010, "Memory");
+    if (reg & 0x200000)
+    {
+        if ((reg & 0x2000) == 0)
+        {
+            reg |= 0x2000;
+            __writeMemory32(reg, 0x44484010, "Memory");
+        }
+        if ((reg & 0x40000000)!= 0)
+        {
+            reg &= ~0x40000000;
+            __writeMemory32(reg, 0x44484010, "Memory");
+        }
+        __message "syspll3 has been initialized already\n";
+        return;
+    }
+
+    //PMU_StaticEnablePllLdo
+    reg = __readMemory32(0x44484680, "Memory");
+    if (reg != (((0x10 << 4) & 0x1F0) | 0x1 | 0x4))
+    {
+        reg = ((0x10 << 4) & 0x1F0) | 0x1 | 0x4;
+        __writeMemory32(reg, 0x44484680, "Memory");
+        __delay(1);//1us
+    }
+
+    //Gate all PFDs
+    reg = __readMemory32(0x44484030, "Memory");
+    reg |= 0x80808080;
+    __writeMemory32(reg, 0x44484030, "Memory");
+
+    // 1. configure PLL registres
+    // 2. Enable internal LDO
+    // 3. Wati LDO stable
+    // 4. Power up PLL, assert hold_ring_off (only needed for avpll)
+    // 5. At half lock time, de-asserted hold_ring_off (only needed for avpll)
+    // 6. Wait PLL lock
+    // 7. Enable clock output, release pfd_gate
+    reg = 0x10 | 0x40000000;
+    __writeMemory32(reg, 0x44484010, "Memory");
+    __delay(30);//30us
+
+    reg = __readMemory32(0x44484010, "Memory");
+    reg |= 0x200000 | 0x800;
+    __writeMemory32(reg, 0x44484010, "Memory");
+    __delay(30);//30us
+
+    reg = __readMemory32(0x44484010, "Memory");
+    reg &= ~0x800;
+    __writeMemory32(reg, 0x44484010, "Memory");
+
+    //Wait for PLL stable
+    do
+    {
+        reg = __readMemory32(0x44484010, "Memory");
+    } while (0x20000000 != (reg & 0x20000000));
+
+    reg = __readMemory32(0x44484010, "Memory");
+    reg |= 0x2000 | 0x8;
+    __writeMemory32(reg, 0x44484010, "Memory");
+
+    reg = __readMemory32(0x44484010, "Memory");
+    reg &= ~0x40000000;
+    __writeMemory32(reg, 0x44484010, "Memory");
+}
+
+_InitSysPll3Pfd2()
+{
+    __var reg;
+    __var stable;
+
+    // ANADIG_PLL_PLL3_PFD
+    reg = __readMemory32(0x44484030, "Memory");
+    if ((((reg & 0x800000) >> 2) != 0) || (((reg & 0x3F0000) >> 16) != 26))
+    {
+        stable = reg & 0x400000;
+
+        reg |= 0x800000;
+        __writeMemory32(reg, 0x44484030, "Memory");
+
+        reg = __readMemory32(0x44484030, "Memory");
+        reg &= ~0x3F0000;
+        reg |= 26 << 16;
+        __writeMemory32(reg, 0x44484030, "Memory");
+
+        reg = __readMemory32(0x44484020, "Memory");
+        reg ^= 0x8;
+        __writeMemory32(reg, 0x44484020, "Memory");
+
+        reg = __readMemory32(0x44484030, "Memory");
+        reg &= ~0x800000;
+        __writeMemory32(reg, 0x44484030, "Memory");
+        do
+        {
+            reg = __readMemory32(0x44484030, "Memory") & 0x400000;
+        } while (reg == stable);
+    }
+    else
+    {
+        __message "syspll3 pfd2 has been initialized alrady\n";
+        return;
+    }
+}
+
+_Set_HyperClock()
+{
+    __var reg;
+    __var val;
+
+    _InitSysPll3();
+    _InitSysPll3Pfd2();
+
+    // Set HyperRAM root clock
+    reg = 0x44450b00;
+    // Use sys pll3 pfd2 divided by 1: 332Mhz
+    val = 0x200;
+    __writeMemory32(val, reg, "Memory");
+
+    __message "clock init done\n";
+}
+
+_hyper_pinInit()
+{
+    // Config IOMUX for HyperRAM
+    __writeMemory32(0x00000013, 0x42A10088, "Memory");// FLEXSPI2_B_DATA03
+    __writeMemory32(0x00000013, 0x42A1008C, "Memory");// FLEXSPI2_B_DATA02
+    __writeMemory32(0x00000013, 0x42A10090, "Memory");// FLEXSPI2_B_DATA01
+    __writeMemory32(0x00000013, 0x42A10094, "Memory");// FLEXSPI2_B_DATA00
+    __writeMemory32(0x00000013, 0x42A1009C, "Memory");// FLEXSPI2_A_DATA00
+    __writeMemory32(0x00000013, 0x42A100A0, "Memory");// FLEXSPI2_A_DATA01
+    __writeMemory32(0x00000013, 0x42A100A4, "Memory");// FLEXSPI2_A_DATA02
+    __writeMemory32(0x00000013, 0x42A100A8, "Memory");// FLEXSPI2_A_DATA03
+    __writeMemory32(0x00000013, 0x42A100AC, "Memory");// FLEXSPI2_A_SS0_B
+    __writeMemory32(0x00000013, 0x42A100B0, "Memory");// FLEXSPI2_A_DQS
+    __writeMemory32(0x00000013, 0x42A100B4, "Memory");// FLEXSPI2_A_SCLK
+
+    //The input daisy!!
+    __writeMemory32(0x00000001, 0x42A10594, "Memory");// FLEXSPI2_B_DATA03
+    __writeMemory32(0x00000001, 0x42A10590, "Memory");// FLEXSPI2_B_DATA02
+    __writeMemory32(0x00000001, 0x42A1058C, "Memory");// FLEXSPI2_B_DATA01
+    __writeMemory32(0x00000001, 0x42A10588, "Memory");// FLEXSPI2_B_DATA00
+    __writeMemory32(0x00000000, 0x42A10578, "Memory");// FLEXSPI2_A_DATA00
+    __writeMemory32(0x00000000, 0x42A1057C, "Memory");// FLEXSPI2_A_DATA01
+    __writeMemory32(0x00000000, 0x42A10580, "Memory");// FLEXSPI2_A_DATA02
+    __writeMemory32(0x00000000, 0x42A10584, "Memory");// FLEXSPI2_A_DATA03
+    __writeMemory32(0x00000000, 0x42A10570, "Memory");// FLEXSPI2_A_DQS
+    __writeMemory32(0x00000000, 0x42A10598, "Memory");// FLEXSPI2_A_SCLK
+
+    // PAD ctrl
+    __writeMemory32(0x00000008, 0x42A102D0, "Memory");// FLEXSPI2_B_DATA03
+    __writeMemory32(0x00000008, 0x42A102D4, "Memory");// FLEXSPI2_B_DATA02
+    __writeMemory32(0x00000008, 0x42A102D8, "Memory");// FLEXSPI2_B_DATA01
+    __writeMemory32(0x00000008, 0x42A102DC, "Memory");// FLEXSPI2_B_DATA00
+    __writeMemory32(0x00000008, 0x42A102E4, "Memory");// FLEXSPI2_A_DATA00
+    __writeMemory32(0x00000008, 0x42A102E8, "Memory");// FLEXSPI2_A_DATA01
+    __writeMemory32(0x00000008, 0x42A102EC, "Memory");// FLEXSPI2_A_DATA02
+    __writeMemory32(0x00000008, 0x42A102F0, "Memory");// FLEXSPI2_A_DATA03
+    __writeMemory32(0x00000008, 0x42A102F4, "Memory");// FLEXSPI2_A_SS0_B
+    __writeMemory32(0x00000008, 0x42A102F8, "Memory");// FLEXSPI2_A_DQS
+    __writeMemory32(0x00000008, 0x42A102FC, "Memory");// FLEXSPI2_A_SCLK
+}
+
+_hyper_Init()
+{
+    // Config FlexSPI Registers
+    __var reg;
+    reg = __readMemory32(0x445E0000, "Memory");
+    __writeMemory32((reg & 0xFFFFFFFD), 0x445E0000, "Memory"); 
+    _Flexspi_reset();
+    __writeMemory32(0xFFFF3032, 0x445E0000, "Memory"); // MCR0
+    __writeMemory32(0xFFFFFFFF, 0x445E0004, "Memory"); // MCR1
+    __writeMemory32(0x200001F7, 0x445E0008, "Memory"); // MCR2
+    __writeMemory32(0x00000078, 0x445E000C, "Memory"); // AHBCR prefetch enable
+    __writeMemory32(0x800F0000, 0x445E0020, "Memory"); // AHBRXBUF0CR0
+    __writeMemory32(0x800F0000, 0x445E0024, "Memory"); // AHBRXBUF1CR0
+    __writeMemory32(0x800F0000, 0x445E0028, "Memory"); // AHBRXBUF2CR0
+    __writeMemory32(0x800F0000, 0x445E002C, "Memory"); // AHBRXBUF3CR0
+    __writeMemory32(0x800F0000, 0x445E0030, "Memory"); // AHBRXBUF4CR0
+    __writeMemory32(0x800F0000, 0x445E0034, "Memory"); // AHBRXBUF5CR0
+    __writeMemory32(0x80000020, 0x445E0038, "Memory"); // AHBRXBUF6CR0
+    __writeMemory32(0x80000020, 0x445E003C, "Memory"); // AHBRXBUF7CR0
+    __writeMemory32(0x00000000, 0x445E00B8, "Memory"); // IPRXFCR
+    __writeMemory32(0x00000000, 0x445E00BC, "Memory"); // IPTXFCR
+
+    __writeMemory32(0x00000000, 0x445E0060, "Memory"); // FLASHA1CR0
+    __writeMemory32(0x00000000, 0x445E0064, "Memory"); // FLASHA2CR0
+    __writeMemory32(0x00000000, 0x445E0068, "Memory"); // FLASHB1CR0
+    __writeMemory32(0x00000000, 0x445E006C, "Memory"); // FLASHB2CR0
+
+    _FLEXSPI_BusIdle();
+    __writeMemory32(0x00002000, 0x445E0060, "Memory"); // FLASHA1CR0
+    __writeMemory32(0x00021C63, 0x445E0070, "Memory"); // FLASHA1CR1 
+    __writeMemory32(0x00000100, 0x445E0080, "Memory"); // FLASHA1CR2
+    _FLEXSPI_BusIdle();
+    __writeMemory32(0x00000079, 0x445E00C0, "Memory"); // DLLCRA   
+    __writeMemory32(0xFFFF3030, 0x445E0000, "Memory"); // MCR0
+    if(0 != (0x79 & 0x1))
+    {
+        do
+        {
+            reg = __readMemory32(0x445E00E8, "Memory");
+        } while (0x3 != (reg & 0x3));
+        __delay(100);//100us
+    }
+    __writeMemory32(0xFFFF3032, 0x445E0000, "Memory"); // MCR0
+    __writeMemory32(0x000000C2, 0x445E0094, "Memory"); // FLASHCR4 
+    __writeMemory32(0x000000C6, 0x445E0094, "Memory"); // FLASHCR4
+    __writeMemory32(0xFFFF3030, 0x445E0000, "Memory"); // MCR0
+    _FLEXSPI_BusIdle();
+    __writeMemory32(0x5AF05AF0, 0x445E0018, "Memory"); // LUTKEY
+    __writeMemory32(0x00000002, 0x445E001C, "Memory"); // LUTCR
+    __writeMemory32(0x8B1887A0, 0x445E0200, "Memory"); // LUT[0]
+    __writeMemory32(0xB7078F10, 0x445E0204, "Memory"); // LUT[1]
+    __writeMemory32(0x0000A704, 0x445E0208, "Memory"); // LUT[2]
+    __writeMemory32(0x00000000, 0x445E020C, "Memory"); // LUT[3] 
+    __writeMemory32(0x8B188720, 0x445E0210, "Memory"); // LUT[4]
+    __writeMemory32(0xB7078F10, 0x445E0214, "Memory"); // LUT[5]
+    __writeMemory32(0x0000A304, 0x445E0218, "Memory"); // LUT[6]
+    __writeMemory32(0x00000000, 0x445E021C, "Memory"); // LUT[7]
+    __writeMemory32(0x8B1887E0, 0x445E0220, "Memory"); // LUT[8]
+    __writeMemory32(0xB7078F10, 0x445E0224, "Memory"); // LUT[9]
+    __writeMemory32(0x0000A704, 0x445E0228, "Memory"); // LUT[10]
+    __writeMemory32(0x00000000, 0x445E022C, "Memory"); // LUT[11]
+    __writeMemory32(0x8B188760, 0x445E0230, "Memory"); // LUT[12]
+    __writeMemory32(0xA3048F10, 0x445E0234, "Memory"); // LUT[13]
+    __writeMemory32(0x00000000, 0x445E0238, "Memory"); // LUT[14]
+    __writeMemory32(0x00000000, 0x445E023C, "Memory"); // LUT[15]
+    __writeMemory32(0x00000000, 0x445E0240, "Memory"); // LUT[16]
+    __writeMemory32(0x00000000, 0x445E0244, "Memory"); // LUT[17]
+    __writeMemory32(0x00000000, 0x445E0248, "Memory"); // LUT[18]
+    __writeMemory32(0x00000000, 0x445E024C, "Memory"); // LUT[19]
+    __writeMemory32(0x5AF05AF0, 0x445E0018, "Memory"); // LUTKEY
+    __writeMemory32(0x00000001, 0x445E001C, "Memory"); // LUTCR
+
+    _Flexspi_reset();
+}
+
+_initHyperRAM()
+{
+    __message "Init HyperRAM Again";
+    _hyper_pinInit();
+    _Set_HyperClock();
+    _hyper_Init();
+    __message "HyperRAM init done\n";
+}
+
+_initQSPIFlash()
+{
+    __message "Init Flash Again";
+    if(0 != initFlexSPI)
+    {
+        _FlexSPI_init();
+    }
+    __message "Flash init done\n";
+}
+
+execUserPreload()
+{
+    _initQSPIFlash();
+    _initHyperRAM();
+}
