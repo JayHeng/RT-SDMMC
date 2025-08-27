@@ -67,7 +67,7 @@
                 </option>
                 <option>
                     <name>RTDescription</name>
-                    <state>0</state>
+                    <state>A compact configuration of the C/C++14 runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
                 </option>
                 <option>
                     <name>OGProductVersion</name>
@@ -104,7 +104,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>35</version>
-                    <state>58</state>
+                    <state>61</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -194,7 +194,7 @@
                 <option>
                     <name>TrustZoneModes</name>
                     <version>0</version>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGAarch64Abi</name>
@@ -685,15 +685,15 @@
                 <option>
                     <name>OOCOutputFormat</name>
                     <version>3</version>
-                    <state>3</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>sdk20-app.bin</state>
+                    <state>mmc_boot.srec</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1201,6 +1201,12 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\MIMXRT685S_cm33_features.h</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\system_MIMXRT685S_cm33.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\system_MIMXRT685S_cm33.h</name>
+        </file>
     </group>
     <group>
         <name>drivers</name>
@@ -1269,33 +1275,18 @@
         </file>
     </group>
     <group>
-        <name>flash_config</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\flash_config\flash_config.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\flash_config\flash_config.h</name>
-        </file>
-    </group>
-    <group>
         <name>MIMXRT685S</name>
-        <group>
-            <name>iar</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\iar\startup_MIMXRT685S_cm33.s</name>
-            </file>
-        </group>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\system_MIMXRT685S_cm33.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\system_MIMXRT685S_cm33.h</name>
-        </file>
     </group>
     <group>
         <name>source</name>
         <file>
             <name>$PROJ_DIR$\..\hello_world.c</name>
+        </file>
+    </group>
+    <group>
+        <name>startup</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\iar\startup_MIMXRT685S_cm33.s</name>
         </file>
     </group>
     <group>
