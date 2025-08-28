@@ -67,7 +67,7 @@
                 </option>
                 <option>
                     <name>RTDescription</name>
-                    <state>0</state>
+                    <state>A compact configuration of the C/C++14 runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
                 </option>
                 <option>
                     <name>OGProductVersion</name>
@@ -104,7 +104,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>35</version>
-                    <state>58</state>
+                    <state>61</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -194,7 +194,7 @@
                 <option>
                     <name>TrustZoneModes</name>
                     <version>0</version>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OGAarch64Abi</name>
@@ -241,7 +241,7 @@
                     <name>CCDefines</name>
                     <state>DEBUG</state>
                     <state>CPU_MIMXRT685SFVKB_cm33</state>
-                    <state>BOOT_HEADER_ENABLE=1</state>
+                    <state>BOOT_HEADER_ENABLE=0</state>
                     <state>MCUXPRESSO_SDK</state>
                 </option>
                 <option>
@@ -689,11 +689,11 @@
                 </option>
                 <option>
                     <name>OCOutputOverride</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>sdk20-app.bin</state>
+                    <state>mmc_app.bin</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -731,7 +731,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>hello_world.out</state>
+                    <state>mmc_app.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
