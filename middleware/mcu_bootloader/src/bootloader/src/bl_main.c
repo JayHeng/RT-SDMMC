@@ -26,9 +26,22 @@
 // Prototypes
 ////////////////////////////////////////////////////////////////////////////////
 
+#define BOARD_RT1170_CUSTOMER_2nd_USDHC_FEMDME008G    (0)
+#define BOARD_RT600_NXPVAL_1st_USDHC_THGBMNG5D1LBAIT  (1)
+
+#if BOARD_RT1170_CUSTOMER_2nd_USDHC_FEMDME008G
+#define MMC_CFG_OPTION0  (0xc0001200)
+#define MMC_CFG_OPTION1  (0x00040002)
+#define APP_EXEC_START   (0x2000)
+#define APP_LENGTH       (0x6000)
+#elif BOARD_RT600_NXPVAL_1st_USDHC_THGBMNG5D1LBAIT
+#define MMC_CFG_OPTION0  (0xC0010100)
+#define MMC_CFG_OPTION1  (0x00000000)
+#define APP_EXEC_START   (0x80000)
+#define APP_LENGTH       (0x6000)
+#endif
+
 #define APP_EMMC_START  (0x80000)
-#define APP_EXEC_START  (0x2000)
-#define APP_LENGTH      (0x6000)
 
 static void get_user_application_entry(uint32_t *appEntry, uint32_t *appStack);
 static void jump_to_application(uint32_t applicationAddress, uint32_t stackPointer);
@@ -181,8 +194,8 @@ static void bootloader_run(void)
     
     mmc_config_t mmcConfig = 
     {
-       .word0.U = 0xc0001200,
-       .word1.U = 0x00040002,
+       .word0.U = MMC_CFG_OPTION0,
+       .word1.U = MMC_CFG_OPTION1,
     };
 
     status = mem_config(kMemoryMMCCard, (uint32_t *)&mmcConfig);

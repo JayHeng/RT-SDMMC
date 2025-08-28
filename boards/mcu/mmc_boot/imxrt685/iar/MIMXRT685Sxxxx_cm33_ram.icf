@@ -44,14 +44,14 @@ if (isdefinedsymbol(__heap_size__)) {
 /* The SRAM region [0x20000-0x7FFFF] is reserved for Non-cached shared memory between M33 and DSP. */
 
 
-define symbol m_interrupts_start               = 0x00080000;
-define symbol m_interrupts_end                 = 0x0008012F;
+define symbol m_interrupts_start               = 0x00002000;
+define symbol m_interrupts_end                 = 0x0000212F;
 
-define symbol m_text_start                     = 0x00080130;
-define symbol m_text_end                       = 0x0017FFFF;
+define symbol m_text_start                     = 0x00002130;
+define symbol m_text_end                       = 0x0000FFFF;
 
-define symbol m_data_start                     = 0x20180000;
-define symbol m_data_end                       = 0x201FFFFF;
+define symbol m_data_start                     = 0x20000000;
+define symbol m_data_end                       = 0x2001BFFF;
 
 define symbol m_usb_sram_start                 = 0x40140000;
 define symbol m_usb_sram_end                   = 0x40143FFF;
