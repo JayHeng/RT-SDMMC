@@ -30661,7 +30661,15 @@ typedef struct {
   __IO uint32_t M33NMISRCSEL;                      /**< M33 nmi source selection, offset: 0x30 */
   __IO uint32_t SYSTEM_STICK_CALIB;                /**< system stick calibration, offset: 0x34 */
   __IO uint32_t SYSTEM_NSTICK_CALIB;               /**< system nstick calibration, offset: 0x38 */
-       uint8_t RESERVED_2[36];
+  __IO uint32_t CONFIG_LCKOUT;                     /**< config lockout, offset: 0x3C */
+  __O  uint32_t SRAMCFGENABLE0;                    /**< sram config enable 0, offset: 0x40 */
+  __O  uint32_t SRAMCFGENABLE1;                    /**< sram config enable 1, offset: 0x44 */
+       uint8_t RESERVED_2_1[4];
+  __IO uint32_t SOFTPARTCFG;                       /**< , offset: 0x4C */
+  __IO uint32_t PERICFGENABLE0;                    /**< periperhal config enable 0, offset: 0x50 */
+  __IO uint32_t PERICFGENABLE1;                    /**< periperhal config enable 1, offset: 0x54 */
+  __IO uint32_t PERICFGENABLE2;                    /**< periperhal config enable 2, offset: 0x58 */
+       uint8_t RESERVED_2_2[4];
   __I  uint32_t PRODUCT_ID;                        /**< product ID, offset: 0x60 */
   __I  uint32_t SILICONREV_ID;                     /**< SILICONREV ID, offset: 0x64 */
   __I  uint32_t JTAG_ID;                           /**< jtag ID, offset: 0x68 */

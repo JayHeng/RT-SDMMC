@@ -6,21 +6,14 @@
  *
  */
 
-#include "bootloader/bl_context.h"
+#include "bl_context.h"
 #include "bootloader_common.h"
-#include "fsl_clock.h"
+#include "fsl_assert.h"
 #include "fsl_device_registers.h"
 #include "fsl_reset.h"
-#include "microseconds/microseconds.h"
-#include "peripherals_pinmux.h"
-#include "utilities/fsl_assert.h"
-
-#include "bootloader/bootloader.h"
+#include "fsl_clock.h"
 #include "fusemap.h"
 #include "target_config.h"
-
-#include "bootloader/bootloader.h"
-#include "property/property.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
@@ -38,8 +31,6 @@ enum
 ////////////////////////////////////////////////////////////////////////////////
 
 void pmc_apply_cfg(void);
-// Do SW delay
-static void sw_delay_us(uint32_t us);
 
 ////////////////////////////////////////////////////////////////////////////////
 // Variables
@@ -101,27 +92,6 @@ void init_hardware_api(void)
 {
 }
 
-void sw_delay_us(uint32_t us)
-{
-    uint32_t coreClock = CLOCK_GetFreq(kCLOCK_CoreSysClk);
-    uint32_t ticksPerUs = coreClock / 1000000u / 4 + 1;
-
-    //   debug_printf("CoreClock = %dMHz\n", coreClock / 1000000);
-
-    //   debug_printf("sw_delay_us start\n");
-
-    while (us--)
-    {
-        register uint32_t ticks = ticksPerUs;
-        while (ticks--)
-        {
-            __NOP();
-        }
-    }
-
-    //   debug_printf("sw_delay_us end\n");
-}
-
 void pmc_apply_cfg(void)
 {
     // Apply PMC change and while until the FSM is idle
@@ -130,6 +100,9 @@ void pmc_apply_cfg(void)
     {
     }
 }
+
+#define SYSCTL0_PERICFGENABLE1_SDIO0_EN_MASK     (0x4U)
+#define SYSCTL0_PERICFGENABLE1_SDIO1_EN_MASK     (0x8U)
 
 void init_hardware(void)
 {
@@ -146,11 +119,9 @@ void init_hardware(void)
 
     // Apply PMC change
     pmc_apply_cfg();
-    SC_ADD(1);
 
     // Configure clock here because the configure_clocks has been removed from bl_main.c
     configure_clocks(kClockOption_EnterBootloader);
-    SC_ADD(1);
 }
 
 void deinit_hardware(void)

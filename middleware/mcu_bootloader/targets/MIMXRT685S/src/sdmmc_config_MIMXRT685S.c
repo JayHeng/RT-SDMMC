@@ -9,18 +9,18 @@
 
 #include "bootloader_common.h"
 #include "fsl_device_registers.h"
-#include "bootloader/bootloader.h"
+#include "bootloader.h"
 #include "fusemap.h"
 #include "sdmmc_init.h"
-#include "utilities/fsl_assert.h"
+#include "fsl_assert.h"
 #include "fsl_mmc.h"
 #include "fsl_sd.h"
 #include "lpc_gpio/fsl_gpio.h"
 #if BL_FEATURE_MMC_MODULE
-#include "memory/src/mmc_memory.h"
+#include "mmc_memory.h"
 #endif
 #if BL_FEATURE_SD_MODULE
-#include "memory/src/sd_memory.h"
+#include "sd_memory.h"
 #endif
 /*******************************************************************************
  * Definitons

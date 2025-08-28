@@ -7,17 +7,13 @@
 *
 */
 
+#include "bl_context.h"
 #include "bootloader_common.h"
-#include "property/property.h"
-#include "memory/memory.h"
-#include "bootloader/bl_peripheral.h"
-#include "bootloader/bl_context.h"
-#include "bootloader/bl_version.h"
-#include "utilities/fsl_assert.h"
-#include <string.h>
+#include "fsl_assert.h"
 #include "fsl_device_registers.h"
-
-#include "bootloader/bootloader.h"
+#include "memory.h"
+#include "property.h"
+#include <string.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Declarations
@@ -78,9 +74,6 @@ extern uint32_t __STACK_TOP[];
 #endif // __ICCARM__
 #endif // BL_FEATURE_RESERVED_REGION_AUTO_PROBE
 
-//!@brief Determine Whether Device is in secure mode
-secure_bool_t is_in_secure_mode(void);
-
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
 ////////////////////////////////////////////////////////////////////////////////
@@ -108,35 +101,17 @@ const property_interface_t g_propertyInterface = { bootloader_property_init,
                                                    bootloader_property_get, bootloader_property_set_uint32,
                                                    &g_propertyStore };
 
-//! @brief Storage for property values computed every time they are read.
-static uint32_t s_propertyReturnValue;
-
 ////////////////////////////////////////////////////////////////////////////////
 // Prototypes
 ////////////////////////////////////////////////////////////////////////////////
 // !@brief Get external memory properties
 status_t bootloader_get_external_memory_properties(uint32_t memoryId, external_memory_property_store_t *store);
 
+void bootloader_property_soc_update(void);
+
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
-
-secure_bool_t is_in_secure_mode(void)
-{
-    secure_bool_t secureState = kSECURE_TRUE;
-    uint32_t lifeCycle = get_product_lifecycle();
-    switch (lifeCycle)
-    {
-        case kProductLifeCycle_CustomerDevelopment:
-            secureState = kSECURE_FALSE;
-            break;
-        default:
-            secureState = kSECURE_TRUE;
-            break;
-    }
-
-    return secureState;
-}
 
 // See property.h for documentation on this function.
 status_t bootloader_property_init(void)
@@ -148,23 +123,10 @@ status_t bootloader_property_init(void)
 
     if (status != kStatus_Success)
     {
-        go_fatal_mode();
+        return status;
     }
 
     property_store_t *propertyStore = g_bootloaderContext.propertyInterface->store;
-
-    // Fill in default values.
-    propertyStore->bootloaderVersion.name = (char)kBootloader_Version_Name;
-    propertyStore->bootloaderVersion.major = kBootloader_Version_Major;
-    propertyStore->bootloaderVersion.minor = kBootloader_Version_Minor;
-    propertyStore->bootloaderVersion.bugfix = kBootloader_Version_Bugfix;
-
-    propertyStore->targetVersion.name = (char)kTarget_Version_Name;
-    propertyStore->targetVersion.major = kTarget_Version_Major;
-    propertyStore->targetVersion.minor = kTarget_Version_Minor;
-    propertyStore->targetVersion.bugfix = (uint8_t)rompatchVersion;
-
-    propertyStore->verifyWrites = true;
 
 // Fill in reserved regions.
 //! @todo Support other tool chain
@@ -185,18 +147,6 @@ status_t bootloader_property_init(void)
     propertyStore->reservedRegions[kProperty_RamReservedRegionIndex].endAddress = ramEnd;
 #endif // BL_FEATURE_RESERVED_REGION_AUTO_PROBE
 
-    // Fill in available peripherals array.
-    const peripheral_descriptor_t *peripherals = g_bootloaderContext.allPeripherals;
-    propertyStore->availablePeripherals = 0;
-    for (uint32_t i = 0; peripherals[i].typeMask != 0; ++i)
-    {
-        // Check that the peripheral is enabled in the user configuration data.
-        if (propertyStore->configurationData.enabledPeripherals & peripherals[i].typeMask)
-        {
-            propertyStore->availablePeripherals |= peripherals[i].typeMask;
-        }
-    }
-
 // Fill in unique device id value.
 #if defined(SYSCON)
 #if defined(SYSCON_DEVICE_ID0_PARTID_MASK)
@@ -212,8 +162,6 @@ status_t bootloader_property_init(void)
     propertyStore->UniqueDeviceId.uid[1] = SYSCTL0->UUID[1];
     propertyStore->UniqueDeviceId.uid[2] = SYSCTL0->UUID[2];
     propertyStore->UniqueDeviceId.uid[3] = SYSCTL0->UUID[3];
-    propertyStore->SystemDeviceId = ((SYSCTL0->PRODUCT_ID & 0xFFFF) << 16) | ((SYSCTL0->SILICONREV_ID >> 4) & 0xF000) |
-                                    ((SYSCTL0->SILICONREV_ID << 8) & 0x0F00);
 #else
 #error Unsupport LPC devices.
 #endif
@@ -248,13 +196,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
     const void *returnValue;
     switch (tag)
     {
-        case kPropertyTag_BootloaderVersion:
-            returnValue = &propertyStore->bootloaderVersion.version;
-            break;
-
-        case kPropertyTag_AvailablePeripherals:
-            returnValue = &propertyStore->availablePeripherals;
-            break;
         case kPropertyTag_RAMStartAddress:
             if (id >= kRAMCount)
             {
@@ -276,42 +217,15 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
                 returnValue = &propertyStore->ramSizeInBytes[id];
             }
             break;
-        case kPropertyTag_CheckStatus:
-            switch (id)
-            {
-                default:
-                    return kStatus_UnknownProperty;
-                    break;
-            }
-            break;
-        case kPropertyTag_VerifyWrites:
-            returnValue = &propertyStore->verifyWrites;
-            break;
-
-        case kPropertyTag_MaxPacketSize:
-            // Read the max packet size from the active peripheral.
-            s_propertyReturnValue = g_bootloaderContext.activePeripheral->packetInterface->getMaxPacketSize(
-                g_bootloaderContext.activePeripheral);
-            returnValue = &s_propertyReturnValue;
-            break;
 
         case kPropertyTag_ReservedRegions:
             returnSize = sizeof(propertyStore->reservedRegions);
             returnValue = propertyStore->reservedRegions;
             break;
 
-        case kPropertyTag_SystemDeviceId:
-            returnSize = kSysDeviceID_SizeInBytes;
-            returnValue = &propertyStore->SystemDeviceId;
-            break;
-
         case kPropertyTag_UniqueDeviceId:
             returnSize = kUid_SizeInBytes;
             returnValue = &propertyStore->UniqueDeviceId;
-            break;
-
-        case kPropertyTag_TargetVersion:
-            returnValue = &propertyStore->targetVersion.version;
             break;
 #if BL_FEATURE_EXTERNAL_MEMORY_PROPERTY
         case kPropertyTag_ExternalMemoryAttributes:
@@ -327,11 +241,6 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
             returnValue = &propertyStore->externalMemoryPropertyStore;
             break;
 #endif // BL_FEATURE_EXTERNAL_MEMORY_PROPERTY
-
-        case kPropertyTag_SecurityState:
-            s_propertyReturnValue = 0;
-            returnValue = &s_propertyReturnValue;
-            break;
 
         default:
             return kStatus_UnknownProperty;
@@ -355,17 +264,8 @@ status_t bootloader_property_get(uint8_t tag, uint32_t id, const void **value, u
 // See property.h for documentation on this function.
 status_t bootloader_property_set_uint32(uint8_t tag, uint32_t value)
 {
-    property_store_t *propertyStore = g_bootloaderContext.propertyInterface->store;
-
     switch (tag)
     {
-        case kPropertyTag_VerifyWrites:
-            if (value != 0 && value != 1)
-            {
-                return kStatus_InvalidPropertyValue;
-            }
-            propertyStore->verifyWrites = value;
-            return kStatus_Success;
         case kPropertyTag_BootloaderVersion:
         case kPropertyTag_AvailablePeripherals:
         case kPropertyTag_RAMStartAddress:
@@ -444,9 +344,6 @@ status_t bootloader_get_external_memory_properties(uint32_t memoryId, external_m
 }
 #endif // BL_FEATURE_EXTERNAL_MEMORY_PROPERTY
 
-__WEAK void bootloader_property_soc_update(void)
-{
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // EOF

@@ -241,8 +241,11 @@
                     <name>CCDefines</name>
                     <state>NDEBUG</state>
                     <state>CPU_MIMXRT685SFVKB_cm33</state>
-                    <state>BOOT_HEADER_ENABLE=1</state>
+                    <state>BOOT_HEADER_ENABLE=0</state>
+                    <state>CPU_IS_ARM_CORTEX_M33=1</state>
                     <state>MCUXPRESSO_SDK</state>
+                    <state>BL_TARGET_RAM</state>
+                    <state>SDK_OS_BAREMETAL</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -282,7 +285,7 @@
                 </option>
                 <option>
                     <name>CCDiagSuppress</name>
-                    <state>Pa082,Pa050</state>
+                    <state>Pa082,Pa050,Pe177,Pe186,Ms014,Pa182</state>
                 </option>
                 <option>
                     <name>CCDiagRemark</name>
@@ -364,14 +367,25 @@
                 <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$/..</state>
-                    <state>$PROJ_DIR$/../../../../../devices/MIMXRT685S/utilities/str</state>
-                    <state>$PROJ_DIR$/../../../../../devices/MIMXRT685S/utilities/debug_console_lite</state>
-                    <state>$PROJ_DIR$/../../../../../devices/MIMXRT685S/drivers</state>
                     <state>$PROJ_DIR$/../../../../../devices/MIMXRT685S</state>
-                    <state>$PROJ_DIR$/../../../../../components/uart</state>
-                    <state>$PROJ_DIR$/../../../flash_config</state>
-                    <state>$PROJ_DIR$/../../../../../components/lists</state>
+                    <state>$PROJ_DIR$/../../../../../devices/MIMXRT685S/drivers</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/bootloader</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/include</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/memory</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/memory/src</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/startup</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/property</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/utilities</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/targets/MIMXRT685S/src</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/drivers/microseconds</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/drivers/ocotp</state>
                     <state>$PROJ_DIR$/../../../../../CMSIS/Core/Include</state>
+                    <state>$PROJ_DIR$/../../../../../components/osa</state>
+                    <state>$PROJ_DIR$/../../../../../components/lists</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/drivers/</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/drivers/usdhc</state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/drivers/sdmmc/inc</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -655,7 +669,7 @@
                 </option>
                 <option>
                     <name>AUserIncludes</name>
-                    <state></state>
+                    <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/src/startup</state>
                 </option>
                 <option>
                     <name>AExtraOptionsCheckV2</name>
@@ -1128,27 +1142,6 @@
         </settings>
     </configuration>
     <group>
-        <name>board</name>
-        <file>
-            <name>$PROJ_DIR$\..\board.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\board.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\clock_config.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\clock_config.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\pin_mux.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\pin_mux.h</name>
-        </file>
-    </group>
-    <group>
         <name>CMSIS</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\CMSIS\Core\Include\cmsis_compiler.h</name>
@@ -1181,12 +1174,18 @@
             </file>
         </group>
         <group>
-            <name>uart</name>
+            <name>osa</name>
             <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\uart\fsl_adapter_uart.h</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction.h</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\uart\fsl_adapter_usart.c</name>
+                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction_bm.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction_bm.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction_config.h</name>
             </file>
         </group>
     </group>
@@ -1235,24 +1234,6 @@
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_common_arm.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_flexcomm.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_flexcomm.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_flexspi.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_flexspi.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_gpio.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_gpio.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_iopctl.h</name>
         </file>
         <file>
@@ -1276,38 +1257,236 @@
     </group>
     <group>
         <name>MIMXRT685S</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\bootloader_config.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\clock_config_MIMXRT685S.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\external_memory_property_map_MIMXRT685S.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\fusemap.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\hardware_init_MIMXRT685S.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\memory_map_MIMXRT685S.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\peripherals_pinmux.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\sdmmc_config_MIMXRT685S.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\sdmmc_init.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\security_misc.s</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sram_init_lpc.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\target_config.h</name>
+        </file>
     </group>
     <group>
         <name>source</name>
-        <file>
-            <name>$PROJ_DIR$\..\hello_world.c</name>
-        </file>
+        <group>
+            <name>bootloader</name>
+            <group>
+                <name>src</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_context.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_exception_handler.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_main.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_shutdown_cleanup.c</name>
+                </file>
+            </group>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_context.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_shutdown_cleanup.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bootloader.h</name>
+            </file>
+        </group>
+        <group>
+            <name>drivers</name>
+            <group>
+                <name>gpio</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\lpc_gpio\fsl_gpio.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\lpc_gpio\fsl_gpio.h</name>
+                </file>
+            </group>
+            <group>
+                <name>microseconds</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\microseconds\microseconds.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\microseconds\src\microseconds_sysclk.c</name>
+                </file>
+            </group>
+            <group>
+                <name>otp</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\otp\fsl_otp.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\otp\fsl_otp.h</name>
+                </file>
+            </group>
+            <group>
+                <name>sdmmc</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\src\fsl_mmc.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\inc\fsl_mmc.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\src\fsl_sd.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\inc\fsl_sd.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\src\fsl_sdmmc_common.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\inc\fsl_sdmmc_common.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\port\usdhc\polling\fsl_sdmmc_host.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\inc\fsl_sdmmc_host.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\sdmmc\inc\fsl_sdmmc_spec.h</name>
+                </file>
+            </group>
+            <group>
+                <name>usdhc</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\usdhc\bl_usdhc.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\usdhc\bl_usdhc.h</name>
+                </file>
+            </group>
+        </group>
+        <group>
+            <name>include</name>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\include\bootloader_common.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\include\bootloader_core.h</name>
+            </file>
+        </group>
+        <group>
+            <name>memory</name>
+            <group>
+                <name>src</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\memory.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\mmc_memory.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\mmc_memory.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\normal_memory.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\normal_memory.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\pattern_fill.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\pattern_fill.s</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sd_memory.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sd_memory.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sram_init.h</name>
+                </file>
+            </group>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\memory.h</name>
+            </file>
+        </group>
+        <group>
+            <name>property</name>
+            <group>
+                <name>src</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\property\src\property_lpc.c</name>
+                </file>
+            </group>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\property\property.h</name>
+            </file>
+        </group>
+        <group>
+            <name>utilities</name>
+            <group>
+                <name>src</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\src\debug_util.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\src\fsl_assert.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\src\fsl_rtos_abstraction.c</name>
+                </file>
+            </group>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\fsl_assert.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\fsl_rtos_abstraction.h</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\vector_table_info.h</name>
+            </file>
+        </group>
     </group>
     <group>
         <name>startup</name>
         <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\startup\ar_asm_macros.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\startup\startup.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\iar\startup_MIMXRT685S_cm33.s</name>
-        </file>
-    </group>
-    <group>
-        <name>utilities</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\utilities\debug_console_lite\fsl_assert.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\utilities\debug_console_lite\fsl_assert.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\utilities\debug_console_lite\fsl_debug_console.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\utilities\debug_console_lite\fsl_debug_console.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\utilities\str\fsl_str.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\utilities\str\fsl_str.h</name>
         </file>
     </group>
     <projectSettings>

@@ -18,7 +18,7 @@ static const clock_ip_name_t s_gpioClockName[] = GPIO_CLOCKS;
 
 #if FSL_FEATURE_SOC_RSTCTL0_COUNT | FSL_FEATURE_SOC_RSTCTL1_COUNT
 /*! @brief GPIO reset control bit arrary */
-static RSTCTL_RSTn_t const s_gpioReset[] = GPIO_RSTS;
+static RSTCTL_RSTn_t const s_gpioReset[] = GPIO_RSTS_N;
 #endif
 
 /*******************************************************************************

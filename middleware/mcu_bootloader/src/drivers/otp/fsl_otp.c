@@ -8,8 +8,6 @@
 
 #include "fsl_device_registers.h"
 #include "fsl_otp.h"
-#include "crc/crc32.h"
-
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -62,7 +60,7 @@ static void otp_clear_status(void)
     // Write 1s to clear all error status
     OCOTP->OTP_STATUS = (OCOTP_OTP_STATUS_PROGFAIL_MASK | OCOTP_OTP_STATUS_ERROR_MASK | OCOTP_OTP_STATUS_CRC_FAIL_MASK |
                          OCOTP_OTP_STATUS_SEC_RELOAD_MASK | OCOTP_OTP_STATUS_DED_RELOAD_MASK |
-                         OCOTP_OTP_STATUS_LOACKED_MASK | OCOTP_OTP_STATUS_SEC_MASK | OCOTP_OTP_STATUS_DED_MASK);
+                         OCOTP_OTP_STATUS_LOCKED_MASK | OCOTP_OTP_STATUS_SEC_MASK | OCOTP_OTP_STATUS_DED_MASK);
 }
 
 /* See fsl_otp.h for more details */
@@ -147,59 +145,6 @@ status_t otp_fuse_read(uint32_t addr, uint32_t *data)
 
         status = kStatus_Success;
         *data = OCOTP->OTP_READ_DATA;
-
-    } while (0);
-
-    return status;
-}
-
-/* See fsl_otp.h for more details */
-status_t otp_fuse_program(uint32_t addr, uint32_t data, bool lock)
-{
-    status_t status = kStatus_OTP_Error;
-
-    do
-    {
-        status = otp_wait_busy();
-        if (status != kStatus_Success)
-        {
-            break;
-        }
-
-        otp_clear_status();
-
-        // Start Write operation
-        OCOTP->OTP_CTRL = OCOTP_OTP_CTRL_ADDR(addr) | OCOTP_OTP_CTRL_WR_UNLOCK(0x3e77u) | OCOTP_OTP_CTRL_WORDLOCK(lock);
-        OCOTP->OTP_WRITE_DATA = data;
-
-        // Wait until write operation completes
-        status = otp_wait_busy();
-        if (status != kStatus_Success)
-        {
-            break;
-        }
-
-        // Check whether errors happened or not.
-        uint32_t otp_status = OCOTP->OTP_STATUS;
-        if (otp_status & (OCOTP_OTP_STATUS_ERROR_MASK | OCOTP_OTP_STATUS_PROGFAIL_MASK | OCOTP_OTP_STATUS_LOACKED_MASK))
-        {
-            if (otp_status & OCOTP_OTP_STATUS_PROGFAIL_MASK)
-            {
-                status = kStatus_OTP_ProgramFail;
-            }
-            else if (otp_status & OCOTP_OTP_STATUS_LOACKED_MASK)
-            {
-                status = kStatus_OTP_Locked;
-            }
-            else
-            {
-                status = kStatus_OTP_Error;
-            }
-        }
-        else
-        {
-            status = kStatus_Success;
-        }
 
     } while (0);
 
@@ -313,33 +258,3 @@ status_t otp_crc_check(uint32_t start_addr, uint32_t end_addr, uint32_t crc_addr
     return status;
 }
 
-/* See fsl_otp.h for more details */
-status_t otp_crc_calc(uint32_t *src, uint32_t numberOfWords, uint32_t *crcChecksum)
-{
-    status_t status = kStatus_InvalidArgument;
-
-    do
-    {
-        if ((src == NULL) || ((uint32_t)src & 0x03) || (numberOfWords < 1) || (crcChecksum == NULL))
-        {
-            break;
-        }
-
-        uint32_t crc32Value = 0;
-        crc32_data_t crc32Config;
-        crc32_init(&crc32Config);
-        while (numberOfWords--)
-        {
-            uint32_t fuseValue = *src++;
-            uint32_t tmp = __REV(fuseValue);
-            crc32_update(&crc32Config, (const uint8_t *)&tmp, 4);
-        }
-
-        crc32_finalize(&crc32Config, &crc32Value);
-
-        *crcChecksum = crc32Value;
-        status = kStatus_Success;
-    } while (0);
-
-    return status;
-}

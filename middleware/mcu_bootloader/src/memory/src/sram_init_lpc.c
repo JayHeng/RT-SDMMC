@@ -7,13 +7,13 @@
  */
 
 #include "bootloader_common.h"
-#include "bootloader/bl_context.h"
-#include "memory/memory.h"
+#include "bl_context.h"
+#include "memory.h"
 #if !defined(BOOTLOADER_HOST)
 #include "fsl_device_registers.h"
 #endif // BOOTLOADER_HOST
 #include "sram_init.h"
-#include "utilities/fsl_assert.h"
+#include "fsl_assert.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code

@@ -26,6 +26,12 @@ enum
     kBootloader_ReservedRAM_Size = 0x1c000
 };
 
+//!@brief Unique ID constants
+enum _uid_constrants
+{
+    kUniqueId_SizeInBytes = 16,
+};
+
 //!@brief uSDHC boot device type definitions
 enum
 {

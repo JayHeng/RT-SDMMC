@@ -142,6 +142,7 @@ enum
     kMemoryType_FLASH = 0x00,       //!< The memory is FLASH device
     kMemoryType_RAM = 0x10,         //!< The memory is RAM device
     kMemoryType_Device = 0x20,      //!< The memory is device register
+    kMemoryAliasAddr = 0x100,       //!< This memory map is alias memory
     kMemorySkipInitError = 0x8000u, //!< Skip initialization errors
 };
 

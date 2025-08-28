@@ -5,18 +5,17 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "bootloader/bl_context.h"
+#include "bl_context.h"
 #include "bootloader_common.h"
 #include "fsl_clock.h"
 #include "fsl_device_registers.h"
-#include "fsl_flexspi.h"
 #include "fusemap.h"
-#include "microseconds/microseconds.h"
+#include "microseconds.h"
 #include "otp/fsl_otp.h"
-#include "property/property.h"
+#include "property.h"
 #include "target_config.h"
-#include "utilities/fsl_assert.h"
-#include "bootloader/bootloader.h"
+#include "fsl_assert.h"
+#include "bootloader.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
@@ -76,7 +75,6 @@ enum
 static boot_power_t get_boot_power(void);
 static void boot_set_clocks(boot_power_t boot_power);
 static void init_syspll(uint32_t clk_src, uint32_t src_clk_freq);
-static void init_sysosc(void);
 static void delay_us_sw(uint32_t us);
 extern void pmc_apply_cfg(void);
 
@@ -115,26 +113,6 @@ void init_syspll(uint32_t clk_src, uint32_t src_clk_freq)
         CLKCTL0->SYSPLL0CTL0 &= (uint32_t)~CLKCTL0_SYSPLL0CTL0_HOLDRINGOFF_ENA_MASK;
         delay_us_sw(CLKCTL0->SYSPLL0LOCKTIMEDIV2 / 2);
     }
-}
-
-void init_sysosc(void)
-{
-    SYSCTL0->PDRUNCFG0_CLR = SYSCTL0_PDRUNCFG0_SYSXTAL_PD_MASK;
-    __DSB();
-    __ISB();
-    CLKCTL0->SYSOSCCTL0 = CLKCTL0_SYSOSCCTL0_LP_ENABLE(1) | CLKCTL0_SYSOSCCTL0_BYPASS_ENABLE(0);
-
-    CLKCTL0->SYSOSCBYPASS = CLKCTL0_SYSOSCBYPASS_SEL(SYSOSCSEL_XTAL_CLK);
-
-    // Wait until OSC gets stable
-    uint32_t sysOscStableUsFuseIdx = 14;
-    uint32_t sysOscStableUsFuseValue = 0;
-    status_t status = otp_fuse_read(sysOscStableUsFuseIdx, &sysOscStableUsFuseValue);
-    if (status != kStatus_Success)
-    {
-        go_fatal_mode();
-    }
-    microseconds_delay(sysOscStableUsFuseValue);
 }
 
 boot_power_t get_boot_power(void)
