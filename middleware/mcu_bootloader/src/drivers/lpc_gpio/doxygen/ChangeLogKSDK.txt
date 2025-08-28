@@ -1,0 +1,18 @@
+/*!
+@page driver_log Driver Change Log
+
+@section gpio GPIO
+  Current GPIO driver version is 2.0.0
+
+  - 2.0.0
+    - Initial version.
+  - 2.1.0
+    - Add GPIO initialize API.
+  - 2.1.1:
+    - API Interface Change
+        - Refine naming of API while keep all original APIs with marking them
+          as deprecated. Original API will be removed in next release. The
+          mainin change is update API with prefix of _PinXXX() and
+          _PorortXXX
+
+*/
