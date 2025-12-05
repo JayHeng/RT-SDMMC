@@ -28,7 +28,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // See memory.h for documentation on this function.
-#if BL_FEATURE_EXPAND_MEMORY
 status_t find_external_map_entry(uint32_t address,
                                  uint32_t length,
                                  uint32_t memory_id,
@@ -97,7 +96,6 @@ status_t find_external_map_index(uint32_t memoryId, uint32_t *index)
 
     return status;
 }
-#endif // BL_FEATURE_EXPAND_MEMORY
 
 
 //! @}

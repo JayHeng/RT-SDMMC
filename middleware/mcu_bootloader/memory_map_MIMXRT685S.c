@@ -12,14 +12,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 external_memory_map_entry_t g_externalMemoryMap[] = {
-#if BL_FEATURE_MMC_MODULE
     // MMC card memory
     { .memoryId = kMemoryMMCCard,
       .status = kStatus_Success,
       .basicUnitCount = 0,
       .basicUnitSize = 512,
       .memoryInterface = &g_mmcMemoryInterface },
-#endif // BL_FEATURE_MMC_MODULE
     { 0 } // Terminator
 };
 

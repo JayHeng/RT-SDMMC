@@ -7,7 +7,6 @@
  */
 
 #include <stdint.h>
-#include "bootloader_core.h"
 #include "fsl_device_registers.h"
 
 #if (defined(__ICCARM__))
@@ -179,10 +178,10 @@ void init_data_bss(void)
 void init_interrupts(void)
 {
     // Clear any IRQs that may be enabled, we only want the IRQs we enable to be active
-    NVIC_ClearEnabledIRQs();
+    //NVIC_ClearEnabledIRQs();
 
     // Clear any pending IRQs that may have been set
-    NVIC_ClearAllPendingIRQs();
+    //NVIC_ClearAllPendingIRQs();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

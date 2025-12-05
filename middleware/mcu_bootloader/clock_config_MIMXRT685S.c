@@ -9,7 +9,6 @@
 #include "fsl_clock.h"
 #include "fsl_device_registers.h"
 #include "microseconds.h"
-#include "bootloader.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions

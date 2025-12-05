@@ -37,10 +37,6 @@ void pmc_apply_cfg(void);
 // Code
 ////////////////////////////////////////////////////////////////////////////////
 
-void init_hardware_api(void)
-{
-}
-
 void pmc_apply_cfg(void)
 {
     // Apply PMC change and while until the FSM is idle

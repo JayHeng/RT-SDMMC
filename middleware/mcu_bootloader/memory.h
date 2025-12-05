@@ -10,7 +10,6 @@
 #define _memory_h
 
 #include <stdint.h>
-
 #include "bootloader_common.h"
 
 //! @addtogroup memif
@@ -24,7 +23,6 @@
 enum _bl_memory_id
 {
     kMemoryMMCCard = 1,      // MMC, eMMC memory Card
-    //
 };
 
 //! @brief Memory interface status codes.
@@ -46,73 +44,6 @@ enum _memory_interface_status
     kStatusMemoryUnsupportedCommand = MAKE_STATUS(kStatusGroup_MemoryInterface, 13),
 };
 
-// !@brief Memory property enum codes
-enum
-{
-    /* Memory property bitfield definition.
-     * Bit[0]: 0 -- NotExecutable( None-XIP)
-     *         1 -- Executable(XIP)
-     * Bit[1] : Reserved.(Reserved for Int/Ext. 0 Internal, 1 External)
-     * Bit[3:2] : Reserved.
-     * Bit[7:4] : 0000 -- FLASH.
-     *            0001 -- RAM.
-     *            0010 -- Device.
-     *            0100 -- Reserved.
-     *            1000 -- Reserved.
-     * Bit[15-8] : Reserved.
-     * Bit[16] : Reserved.(Reserved for Bufferable. 0 Not bufferable, 1 Bufferable)
-     * Bit[17] : Reserved.(Reserved for Cacheable. 0 Not cacheable, 1 Cacheable)
-     * Bit[18] : Reserved.(Reserved for Shareable. 0 Not shareable, 1 Shareable)
-     * Bit[31-19] : Reserved.
-     */
-    kMemoryNotExecutable = 0,       //!< The memory doesn't support executing in place.
-    kMemoryIsExecutable = 1,        //!< The memory supports executing in place.
-    kMemoryType_FLASH = 0x00,       //!< The memory is FLASH device
-    kMemoryType_RAM = 0x10,         //!< The memory is RAM device
-    kMemoryType_Device = 0x20,      //!< The memory is device register
-    kMemoryAliasAddr = 0x100,       //!< This memory map is alias memory
-    kMemorySkipInitError = 0x8000u, //!< Skip initialization errors
-};
-
-//! @brief Interface to memory operations.
-//!
-//! This is the main abstract interface to all memory operations.
-typedef struct _memory_interface
-{
-    status_t (*init)(void);
-    status_t (*read)(uint32_t address, uint32_t length, uint8_t *buffer, uint32_t memoryId);
-    status_t (*write)(uint32_t address, uint32_t length, const uint8_t *buffer, uint32_t memoryId);
-    status_t (*fill)(uint32_t address, uint32_t length, uint32_t pattern);
-    status_t (*flush)(void);
-    status_t (*finalize)(void);
-    status_t (*erase)(uint32_t address, uint32_t length, uint32_t memoryId);
-} memory_interface_t;
-
-//! @brief Interface to memory operations for one region of memory.
-typedef struct _memory_region_interface
-{
-    status_t (*init)(void);
-    status_t (*read)(uint32_t address, uint32_t length, uint8_t *buffer);
-    status_t (*write)(uint32_t address, uint32_t length, const uint8_t *buffer);
-    status_t (*fill)(uint32_t address, uint32_t length, uint32_t pattern);
-    status_t (*flush)(void);
-    status_t (*erase)(uint32_t address, uint32_t length);
-    status_t (*config)(uint32_t *buffer);
-    status_t (*erase_all)(void);
-} memory_region_interface_t;
-
-//! @brief Structure of a memory map entry.
-typedef struct _memory_map_entry
-{
-    uint32_t startAddress;
-    uint32_t endAddress;
-    uint32_t memoryProperty;
-    uint32_t memoryId;
-    const memory_region_interface_t *memoryInterface;
-} memory_map_entry_t;
-
-#if BL_FEATURE_EXPAND_MEMORY
-
 typedef struct _external_memory_region_interface
 {
     status_t (*init)(void);
@@ -133,9 +64,7 @@ typedef struct _external_memory_map_entry
     uint32_t basicUnitSize;
     const external_memory_region_interface_t *memoryInterface;
 } external_memory_map_entry_t;
-#endif // BL_FEATURE_EXPAND_MEMORY
 
-#if BL_FEATURE_EXPAND_MEMORY
 enum _external_memorymap_constants
 {
     kIndexStart = 0,
@@ -144,82 +73,14 @@ enum _external_memorymap_constants
     // and are changed by bootloader configuration.
     // Please call find_external_map_index() to get the correct index.
 };
-#endif // BL_FEATURE_EXPAND_MEMORY
-
-//! @brief flash memory erase all options.
-typedef enum _flash_erase_all_option
-{
-    kFlashEraseAllOption_Blocks = 0,
-    kFlashEraseAllOption_ExecuteOnlySegments = 1
-} flash_erase_all_option_t;
-
-//! @brief Flash index constants.
-enum _flash_index_constants
-{
-    kFlashIndex_Main = 0,
-#if defined(FSL_FEATURE_FLASH_HAS_MULTIPLE_FLASH) || defined(FSL_FEATURE_FLASH_PFLASH_1_START_ADDRESS)
-    kFlashIndex_Secondary = 1,
-#if BL_FEATURE_SUPPORT_DFLASH
-    kFalshIndex_DFlash = 2
-#endif // BL_FEATURE_SUPPORT_DFLASH
-#else
-#if BL_FEATURE_SUPPORT_DFLASH
-    kFalshIndex_DFlash = 1
-#endif // BL_FEATURE_SUPPORT_DFLASH
-#endif //  defined(FSL_FEATURE_FLASH_HAS_MULTIPLE_FLASH) || defined(FSL_FEATURE_FLASH_PFLASH_1_START_ADDRESS)
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Externs
 ////////////////////////////////////////////////////////////////////////////////
 
-//! @brief Memory map for the system.
-extern memory_map_entry_t g_memoryMap[];
-
-//! @brief External memory map for the system.
-#if BL_FEATURE_EXPAND_MEMORY
 extern external_memory_map_entry_t g_externalMemoryMap[];
-#endif // BL_FEATURE_EXPAND_MEMORY
 
-//! @name Memory interfaces
-//@{
-
-//! @brief Abstract memory interface.
-//!
-//! This interface utilizes the memory map to perform different memory operations
-//! depending on the region of memory being accessed.
-extern const memory_interface_t g_memoryInterface;
-
-//! @brief Memory interface for memory with Normal type.
-//!
-//! Use of multiword loads and stores is allowed with this memory type.
-extern const memory_region_interface_t g_normalMemoryInterface;
-
-#if CPU_IS_ARM_CORTEX_M7
-//! @brief Memory interface for memory with Normal type.
-//!
-//! Use of multiword loads and stores is allowed with this memory type.
-extern const memory_region_interface_t g_normalDTCMInterface;
-#endif // CPU_IS_ARM_CORTEX_M7
-
-#if defined(CPU_IS_CORTEX_M7) || defined(K28F15_SERIES)
-//! @brief Memory interface for memory with Normal type.
-//!
-//! Use of multiword loads and stores is allowed with this memory type.
-extern const memory_region_interface_t g_normalOCRAMInterface;
-#endif // defined(CPU_IS_CORTEX_M7) || defined(K28F15_SERIES)
-
-//! @brief Memory interface for memory with Device or Strongly-ordered type.
-//!
-//! This memory type does not support multiword loads and stores.
-extern const memory_region_interface_t g_deviceMemoryInterface;
-
-
-#if BL_FEATURE_EXPAND_MEMORY
-#if BL_FEATURE_MMC_MODULE
 extern const external_memory_region_interface_t g_mmcMemoryInterface;
-#endif
-#endif // BL_FEATURE_EXPAND_MEMORY
 
 //@}
 
@@ -232,40 +93,6 @@ extern "C"
 {
 #endif // __cplusplus
 
-    //! @name Generic memory interface implementation
-    //@{
-
-    //! @brief Initialize memory interface.
-    status_t mem_init(void);
-
-    //! @brief Configure memory interface
-    status_t mem_config(uint32_t memoryId, void *config);
-
-    //! @brief Read memory.
-    status_t mem_read(uint32_t address, uint32_t length, uint8_t *buffer, uint32_t memoryId);
-    
-    //! @brief Check address, length and memory id prior to do write memory.
-    status_t mem_write_check(uint32_t address, uint32_t length, uint32_t memoryId);
-    
-    //! @brief Write memory.
-    status_t mem_write(uint32_t address, uint32_t length, const uint8_t *buffer, uint32_t memoryId);
-
-    //! @brief Fill memory with a word pattern.
-    status_t mem_fill(uint32_t address, uint32_t length, uint32_t pattern);
-
-    //! @brief Erase memory.
-    status_t mem_erase(uint32_t address, uint32_t length, uint32_t memoryId);
-
-    //! @brief Flush memory.
-    status_t mem_flush(void);
-
-    //! @brief Reset state machine of memory interface.
-    status_t mem_finalize(void);
-
-    //! @brief Find a map entry that matches address and length.
-    status_t find_map_entry(uint32_t address, uint32_t length, const memory_map_entry_t **map);
-
-#if BL_FEATURE_EXPAND_MEMORY
     //! @brief Find an external map entry that matches address and length.
     status_t find_external_map_entry(uint32_t address,
                                      uint32_t length,
@@ -274,26 +101,6 @@ extern "C"
 
     //! @brief Find an external map index that matches the given memory id.
     status_t find_external_map_index(uint32_t memoryId, uint32_t *index);
-#endif // BL_FEATURE_EXPAND_MEMORY
-
-    //!@brief Check is the specified memory region is erased.
-    bool mem_is_erased(uint32_t address, uint32_t length);
-
-    //@}
-
-    //! @name Memory utilities
-    //@{
-
-    //! @brief Determine if all or part of block is in a reserved region.
-    bool mem_is_block_reserved(uint32_t address, uint32_t length);
-
-
-    //! @name SD CARD
-    //@{
-    //! @brief Erase all SD memory
-    status_t sd_mem_erase_all(void);
-    //! @brief Get Property from SD card driver.
-    status_t sd_get_property(uint32_t whichProperty, uint32_t *value);
 
     //@}
 

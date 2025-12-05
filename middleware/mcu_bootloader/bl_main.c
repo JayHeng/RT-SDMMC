@@ -7,8 +7,8 @@
  */
 
 #include <stdbool.h>
-#include "bootloader.h"
 #include "bootloader_common.h"
+#include "property.h"
 #include "mmc_memory.h"
 
 //! @addtogroup bl_core

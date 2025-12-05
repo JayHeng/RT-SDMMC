@@ -119,7 +119,6 @@ void sd_pinmux_config(USDHC_Type *base, sd_data_bus_width_t busWidth);
 #define BOARD_USDHC_CD_GPIO_INIT()
 #define BOARD_USDHC_CD_STATUS() (0)
 
-#if BL_FEATURE_MMC_MODULE
 /*! @brief MMC power control init function. Not used for ROM */
 #define BOARD_USDHC_MMCCARD_POWER_CONTROL_INIT()
 /*! @brief MMC power enable/disable function. Not used for ROM */
@@ -141,16 +140,6 @@ void sd_pinmux_config(USDHC_Type *base, sd_data_bus_width_t busWidth);
 #define BOARD_MMC_PIN_CONFIG(speed, strength)
 /*! @brief Define for MMC config IO driver strength dynamic */
 #define BOARD_MMC_IO_UPDATE(base, busWidth, speed, strength) /* No need to update for LPC NEXT0 */
-#else
-#define BOARD_USDHC_MMCCARD_POWER_CONTROL_INIT()
-#define BOARD_USDHC_MMCCARD_POWER_CONTROL(state)
-#define BOARD_USDHC_MMCCARD_RESET_CONTROL_INIT(base)
-#define BOARD_USDHC_MMCCARD_RESET_CONTROL(base, enable)
-#define BOARD_USDHC_MMCCARD_VSELECT_INIT(base)
-#define BOARD_MMC_MUX_CONFIG(base, busWidth)
-#define BOARD_MMC_PIN_CONFIG(speed, strength)
-#define BOARD_MMC_IO_UPDATE(base, busWidth, speed, strength)
-#endif
 
 #endif // __SDMMC_INIT_H__
 ////////////////////////////////////////////////////////////////////////////////

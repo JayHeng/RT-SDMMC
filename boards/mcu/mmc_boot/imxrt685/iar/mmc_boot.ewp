@@ -370,8 +370,6 @@
                     <state>$PROJ_DIR$/../../../../../devices/MIMXRT685S</state>
                     <state>$PROJ_DIR$/../../../../../devices/MIMXRT685S/drivers</state>
                     <state>$PROJ_DIR$/../../../../../CMSIS/Core/Include</state>
-                    <state>$PROJ_DIR$/../../../../../components/osa</state>
-                    <state>$PROJ_DIR$/../../../../../components/lists</state>
                     <state>$PROJ_DIR$/../../../../../middleware/mcu_bootloader/</state>
                 </option>
                 <option>
@@ -1150,33 +1148,6 @@
         </file>
     </group>
     <group>
-        <name>component</name>
-        <group>
-            <name>lists</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\lists\fsl_component_generic_list.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\lists\fsl_component_generic_list.h</name>
-            </file>
-        </group>
-        <group>
-            <name>osa</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction_bm.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction_bm.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\components\osa\fsl_os_abstraction_config.h</name>
-            </file>
-        </group>
-    </group>
-    <group>
         <name>device</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\fsl_device_registers.h</name>
@@ -1197,49 +1168,19 @@
     <group>
         <name>drivers</name>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_cache.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_cache.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_clock.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_clock.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_common.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_common.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_common_arm.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_common_arm.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_iopctl.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_power.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_power.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_reset.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_reset.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_usart.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\devices\MIMXRT685S\drivers\fsl_usart.h</name>
         </file>
     </group>
     <group>
@@ -1254,16 +1195,7 @@
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\bl_usdhc.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\bootloader.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\bootloader_common.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\bootloader_config.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\bootloader_core.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\clock_config_MIMXRT685S.c</name>
@@ -1279,12 +1211,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\fsl_mmc.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\fsl_sd.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\fsl_sd.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\fsl_sdmmc_common.c</name>

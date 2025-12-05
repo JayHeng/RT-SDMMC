@@ -9,13 +9,10 @@
 
 #include "bootloader_common.h"
 #include "fsl_device_registers.h"
-#include "bootloader.h"
 #include "sdmmc_init.h"
 #include "fsl_mmc.h"
 #include "fsl_gpio.h"
-#if BL_FEATURE_MMC_MODULE
 #include "mmc_memory.h"
-#endif
 /*******************************************************************************
  * Definitons
  ******************************************************************************/
@@ -49,7 +46,6 @@ const uint32_t usdhc_data_pin_settings = IOPCTL_PIO_PUPDENA(1) | IOPCTL_PIO_PUPD
 /*******************************************************************************
  * Code
  ******************************************************************************/
-#if BL_FEATURE_MMC_MODULE
 static inline void IOPAD_Set(IOPCTL_Type *base, uint8_t port, uint8_t pin, uint32_t fsel, uint32_t setting)
 {
     base->PIO[port][pin] = IOPCTL_PIO_FSEL(fsel) | ((setting) & (~IOPCTL_PIO_FSEL_MASK));
@@ -96,9 +92,7 @@ void usdhc_vselect_init(USDHC_Type *base)
         IOPAD_Set(BOARD_USDHC1_VSELECT_IOPAD, usdhc_vselect_pin_settings);
     }
 }
-#endif // #if BL_FEATURE_MMC_MODULE
 
-#if BL_FEATURE_MMC_MODULE
 void mmc_pinmux_config(USDHC_Type *base, mmc_data_bus_width_t busWidth)
 {
     if (base == BOARD_USDHC0_BASEADDR)
@@ -153,7 +147,6 @@ status_t get_mmc_default_configuration(mmc_card_t *card)
     status_t status = kStatus_Fail;
     return status;
 }
-#endif // #if BL_FEATURE_MMC_MODULE
 
 ////////////////////////////////////////////////////////////////////////////////
 // EOF

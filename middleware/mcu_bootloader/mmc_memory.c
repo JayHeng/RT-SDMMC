@@ -14,7 +14,6 @@
 #include "fsl_clock.h"
 #include "mmc_memory.h"
 
-#if BL_FEATURE_MMC_MODULE
 /*******************************************************************************
  * Definitons
  ******************************************************************************/
@@ -190,22 +189,6 @@ status_t mmc_mem_config(uint32_t *config)
 
     mmc_card_t *card = &g_mmcContext.mmc;
 
-/* If BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE is defined, fixed instance is enabled. Cannot be configured by
- * configuration block.*/
-#if defined(BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE)
-#if BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE == 0
-    card->host.base = BOARD_USDHC0_BASEADDR;
-    card->host.sourceClock_Hz = BOARD_USDHC0_CLK_FREQ;
-#elif BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE == 1
-    card->host.base = BOARD_USDHC1_BASEADDR;
-    card->host.sourceClock_Hz = BOARD_USDHC1_CLK_FREQ;
-#elif BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE == 2
-    card->host.base = BOARD_USDHC2_BASEADDR;
-    card->host.sourceClock_Hz = BOARD_USDHC2_CLK_FREQ;
-#else
-#error Unkown USDHC instance
-#endif // #if BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE == 0
-#else
     switch (mmcConfig->word1.B.instance)
     {
 #if defined(BOARD_USDHC0_BASEADDR)
@@ -232,7 +215,6 @@ status_t mmc_mem_config(uint32_t *config)
         default:
             return kStatus_InvalidArgument;
     }
-#endif // #if defined(BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE)
 
     card->hostVoltageWindowVCC = kMMC_VoltageWindows270to360; // Not really used for bootloader.
     card->hostVoltageWindowVCCQ = kMMC_VoltageWindow170to195; // Not really used for bootloader.
@@ -310,11 +292,7 @@ status_t mmc_mem_config(uint32_t *config)
         mmcBootConfig.bootPartition = (mmc_boot_partition_enable_t)mmcConfig->word0.B.boot_partition_enable;
         mmcBootConfig.enableBootAck = mmcConfig->word0.B.boot_ack == 1 ? true : false;
         mmcBootConfig.retainBootbusCondition = mmcConfig->word0.B.reset_boot_bus_conditions == 1 ? true : false;
-#if BL_FEATURE_MMC_MODULE_ENABLE_PERMANENT_CONFIG
-// Will be added in the future.
-#else
         mmcBootConfig.updateBootConfigProtection = false;
-#endif
         // Do eMMC boot mode configuration.
         status = MMC_SetBootConfig(&g_mmcContext.mmc, &mmcBootConfig);
         if (status != kStatus_Success)
@@ -783,4 +761,3 @@ static status_t get_current_block_count(mmc_card_t *card, uint32_t *partitionBlo
     }
     return status;
 }
-#endif // #if BL_FEATURE_MMC_MODULE
