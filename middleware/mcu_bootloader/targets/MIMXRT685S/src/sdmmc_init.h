@@ -87,17 +87,6 @@ enum
 #define BOARD_USDHC1_RESET_B_PORT GPIO, 3
 #define BOARD_USDHC1_RESET_B_GPIO BOARD_USDHC1_RESET_B_PORT, 20
 
-#if BL_FEATURE_SD_MODULE && BL_FEATURE_SD_MODULE_HAS_CARD_DETECT
-#if defined(BL_FEATURE_SD_MODULE_CARD_DETECT_LEVEL)
-#define BOARD_USDHC_CARD_INSERT_CD_LEVEL (BL_FEATURE_SD_MODULE_CARD_DETECT_LEVEL)
-#endif
-#if defined(BL_FEATURE_SD_MODULE_CARD_DETECT_TIMEOUT)
-#define BOARD_TIMEOUT_CARD_DETECT (BL_FEATURE_SD_MODULE_CARD_DETECT_TIMEOUT)
-#else
-#define BOARD_TIMEOUT_CARD_DETECT 0
-#endif
-#endif
-
 #define USDHC0_DriverIRQHandler SDIO0_IRQHandler
 #define USDHC1_DriverIRQHandler SDIO1_IRQHandler
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,34 +108,6 @@ void sd_pinmux_config(USDHC_Type *base, sd_data_bus_width_t busWidth);
 /*! @brief vselect function. */
 #define BOARD_USDHC_VSELECT_INIT(base) usdhc_vselect_init(base)
 
-#if BL_FEATURE_SD_MODULE
-/*! @brief SD power control init function. Not used for ROM */
-#define BOARD_USDHC_SDCARD_POWER_CONTROL_INIT()
-/*! @brief SD power enable/disable function. Not used for ROM */
-#define BOARD_USDHC_SDCARD_POWER_CONTROL(state)
-
-/*! @brief SD power control init function. Used for ROM */
-#define BOARD_USDHC_SDCARD_RESET_CONTROL_INIT(base) BOARD_USDHC_POWER_CONTROL_INIT(base)
-
-/*! @brief SD power enable/disable function. Used for ROM */
-#define BOARD_USDHC_SDCARD_RESET_CONTROL(base, state) BOARD_USDHC_POWER_CONTROL(base, state)
-
-/*! @brief SD vselect init function. */
-#define BOARD_USDHC_SDCARD_VSELECT_INIT(base) BOARD_USDHC_VSELECT_INIT(base)
-
-/*! @brief SD MUX/PAD config fucntion */
-#define BOARD_SD_MUX_CONFIG(base, busWidth) sd_pinmux_config(base, busWidth)
-
-/*! @brief SD config fucntion for KSDK, not really used for ROM */
-#define BOARD_SD_PIN_CONFIG(speed, strength)
-/*! @brief Define for SD config IO driver strength dynamic */
-#define BOARD_SD_IO_UPDATE(base, busWidth, speed, strength) /* No need to update for LPC NEXT0 */
-
-/*! @brief SD card detection pin config fucntion for KSDK, not really used for ROM */
-#define BOARD_USDHC_CD_GPIO_INIT()
-/*! @brief SD card detection status fucntion for KSDK, not really used for ROM */
-#define BOARD_USDHC_CD_STATUS() (0)
-#else
 #define BOARD_USDHC_SDCARD_POWER_CONTROL_INIT()
 #define BOARD_USDHC_SDCARD_POWER_CONTROL(state)
 #define BOARD_USDHC_SDCARD_RESET_CONTROL_INIT(base)
@@ -157,7 +118,6 @@ void sd_pinmux_config(USDHC_Type *base, sd_data_bus_width_t busWidth);
 #define BOARD_SD_IO_UPDATE(base, busWidth, speed, strength)
 #define BOARD_USDHC_CD_GPIO_INIT()
 #define BOARD_USDHC_CD_STATUS() (0)
-#endif
 
 #if BL_FEATURE_MMC_MODULE
 /*! @brief MMC power control init function. Not used for ROM */

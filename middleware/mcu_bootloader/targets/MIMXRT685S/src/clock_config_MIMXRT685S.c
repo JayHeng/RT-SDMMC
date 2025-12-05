@@ -5,16 +5,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "bl_context.h"
 #include "bootloader_common.h"
 #include "fsl_clock.h"
 #include "fsl_device_registers.h"
-#include "fusemap.h"
 #include "microseconds.h"
-#include "otp/fsl_otp.h"
-#include "property.h"
-#include "target_config.h"
-#include "fsl_assert.h"
 #include "bootloader.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,10 +112,6 @@ void init_syspll(uint32_t clk_src, uint32_t src_clk_freq)
 boot_power_t get_boot_power(void)
 {
     boot_power_t bootPower = kBootPower_Normal;
-    if (OTP_BOOTSPEED_VALUE())
-    {
-        bootPower = kBootPower_High;
-    }
 
     return bootPower;
 }
@@ -150,15 +140,7 @@ void boot_set_clocks(boot_power_t boot_power)
         CLKCTL0->SYSTICKFCLKSEL = 0u;
         CLKCTL0->SYSTICKFCLKDIV = (2u - 1u);
 
-        // Update OTP clock divider before switching to higer clock
         SystemCoreClock = kFreq_198MHz;
-        otp_init(SystemCoreClock);
-
-        // Configure SPI8 clock source and divider
-        CLKCTL1->FRG14CLKSEL = 1u;    //  Select frg_pll, divided from main_pll
-        CLKCTL1->FC14FCLKSEL = 0x04u; // Clock source: FRGCLK
-        CLKCTL1->FRG14CTL = 0x00FFu;  // Configure Divider to 1
-        CLKCTL1->FRGPLLCLKDIV = 0x7;  /* set 396/4 = 49 MHz as FRG input */
 
         // Switch to MAIN PLL
         CLKCTL0->MAINCLKSELB = MAINCLKSELB_MAIN_PLL_CLK;
@@ -178,14 +160,7 @@ void boot_set_clocks(boot_power_t boot_power)
         CLOCK_InitSysPfd(kCLOCK_Pfd0, 24u);
 
         SystemCoreClock = kFreq_48MHz;
-
-        //  Configure SPI8 clock source
-        CLKCTL1->FC14FCLKSEL = 0x01u; // IRC48M/60M
     }
-
-    // Select UART0, I2C2 Clock source
-    CLKCTL1->FLEXCOMM[0].FCFCLKSEL = 0x01u; // IRC48M/60M
-    CLKCTL1->FLEXCOMM[2].FCFCLKSEL = 0x01u; // IRC48M/60M
 
     // Configure uSDHC0 clock = 396/2 = 198 MHz; uSDHC1 clock = 396/4 = 99 MHz
     // Configure uSDHC clock source and divider: main_pll, divider = 1
@@ -214,12 +189,6 @@ void configure_clocks(bootloader_clock_option_t option)
         CLKCTL0->SDIO0FCLKSEL = 0x07u;
         CLKCTL0->SDIO1FCLKDIV = CLKCTL0_SDIO1FCLKDIV_HALT(1);
         CLKCTL0->SDIO1FCLKSEL = 0x07u;
-
-        // Restore UART, I2C and SPI clock settings
-        CLKCTL1->FLEXCOMM[0].FCFCLKSEL = 0x07u;
-        CLKCTL1->FLEXCOMM[2].FCFCLKSEL = 0x07u;
-        CLKCTL1->FC14FCLKSEL = 0x07u;
-        CLKCTL1->FRG14CLKSEL = 0x07u;
     }
 }
 // See bootloader_common.h for documentation on this function.

@@ -6,14 +6,10 @@
  *
  */
 
-#include "bl_context.h"
 #include "bootloader_common.h"
-#include "fsl_assert.h"
 #include "fsl_device_registers.h"
 #include "fsl_reset.h"
 #include "fsl_clock.h"
-#include "fusemap.h"
-#include "target_config.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
@@ -40,53 +36,6 @@ void pmc_apply_cfg(void);
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
-
-void update_memory_map_lpc_sram(void)
-{
-    const uint32_t kSramPartitionSize[32] = {
-        kSize_32KB,  kSize_32KB,  kSize_32KB,  kSize_32KB,  // 0 - 3
-        kSize_32KB,  kSize_32KB,  kSize_32KB,  kSize_32KB,  // 4 - 7
-        kSize_64KB,  kSize_64KB,  kSize_64KB,  kSize_64KB,  // 8 - 11
-        kSize_128KB, kSize_128KB, kSize_128KB, kSize_128KB, // 12 - 15
-        kSize_256KB, kSize_256KB, kSize_256KB, kSize_256KB, // 16 - 19
-        kSize_256KB, kSize_256KB, kSize_256KB, kSize_256KB, // 20 - 23
-        kSize_256KB, kSize_256KB, kSize_256KB, kSize_256KB, // 24 - 27
-        kSize_256KB, kSize_256KB, 0,           0,           // 28 - 31
-    };
-    static uint32_t s_sramIndex = 0;
-
-    // Detect the maximum RAM size
-    uint32_t ramPartionSizeIndex = 31;
-    while ((SYSCTL0->SRAMCFGENABLE0 & (1u << ramPartionSizeIndex)) == 0)
-    {
-        ramPartionSizeIndex--;
-    }
-
-    // Update the RAM size after all required SRAM partitions are powered up.
-    uint32_t actualRamSize = 0;
-    for (uint32_t i = 0; i <= ramPartionSizeIndex; i++)
-    {
-        actualRamSize += kSramPartitionSize[i];
-    }
-
-    // Update the memory map to match the actual SoC configuration.
-    memory_map_entry_t *mapEntry = (memory_map_entry_t *)g_bootloaderContext.memoryMap;
-    uint32_t index = 0;
-    while ((mapEntry != NULL) && mapEntry->memoryInterface != NULL)
-    {
-        if (mapEntry->memoryProperty & kMemoryType_RAM)
-        {
-            if (s_sramIndex == index)
-            {
-                mapEntry->endAddress = mapEntry->startAddress + actualRamSize - 1;
-                ++s_sramIndex;
-                debug_printf("memory_map_entry: start=%x, end=%x\n", mapEntry->startAddress, mapEntry->endAddress);
-            }
-        }
-        ++index;
-        ++mapEntry;
-    }
-}
 
 void init_hardware_api(void)
 {
@@ -124,16 +73,6 @@ void init_hardware(void)
     configure_clocks(kClockOption_EnterBootloader);
 }
 
-void deinit_hardware(void)
-{
-
-}
-
-
-void debug_init(void)
-{
-}
-
 #if __ICCARM__
 
 size_t __write(int handle, const unsigned char *buf, size_t size)
@@ -142,29 +81,6 @@ size_t __write(int handle, const unsigned char *buf, size_t size)
 }
 
 #endif // __ICCARM__
-
-// Update Reserved RAM regions
-void bootloader_property_soc_update(void)
-{
-    property_store_t *propertyStore = g_bootloaderContext.propertyInterface->store;
-
-    uint32_t reservedSize = kBootloader_ReservedRAM_Size;
-
-    // Set address range of RAM in property interface
-    uint32_t ramIndex = 0;
-    const memory_map_entry_t *map = (memory_map_entry_t *)&g_bootloaderContext.memoryMap[0];
-    while (map->memoryInterface != NULL)
-    {
-        if ((map->memoryProperty & kMemoryType_RAM) && (map->memoryProperty & kMemoryIsExecutable))
-        {
-            assert(ramIndex < kRAMCount);
-            propertyStore->reservedRegions[ramIndex].startAddress = map->startAddress;
-            propertyStore->reservedRegions[ramIndex].endAddress = map->startAddress + reservedSize - 1;
-            ramIndex++;
-        }
-        ++map;
-    }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // EOF

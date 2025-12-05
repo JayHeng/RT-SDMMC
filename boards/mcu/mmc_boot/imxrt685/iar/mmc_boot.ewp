@@ -1264,34 +1264,16 @@
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\clock_config_MIMXRT685S.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\external_memory_property_map_MIMXRT685S.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\fusemap.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\hardware_init_MIMXRT685S.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\memory_map_MIMXRT685S.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\peripherals_pinmux.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\sdmmc_config_MIMXRT685S.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\sdmmc_init.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\security_misc.s</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sram_init_lpc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\targets\MIMXRT685S\src\target_config.h</name>
         </file>
     </group>
     <group>
@@ -1301,24 +1283,9 @@
             <group>
                 <name>src</name>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_context.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_exception_handler.c</name>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_main.c</name>
                 </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\src\bl_shutdown_cleanup.c</name>
-                </file>
             </group>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_context.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bl_shutdown_cleanup.h</name>
-            </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\bootloader\bootloader.h</name>
             </file>
@@ -1341,15 +1308,6 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\microseconds\src\microseconds_sysclk.c</name>
-                </file>
-            </group>
-            <group>
-                <name>otp</name>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\otp\fsl_otp.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\drivers\otp\fsl_otp.h</name>
                 </file>
             </group>
             <group>
@@ -1409,79 +1367,19 @@
                     <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\memory.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\memory.h</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\mmc_memory.c</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\mmc_memory.h</name>
                 </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\normal_memory.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\normal_memory.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\pattern_fill.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\pattern_fill.s</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sd_memory.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sd_memory.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\src\sram_init.h</name>
-                </file>
             </group>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\memory\memory.h</name>
-            </file>
-        </group>
-        <group>
-            <name>property</name>
-            <group>
-                <name>src</name>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\property\src\property_lpc.c</name>
-                </file>
-            </group>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\property\property.h</name>
-            </file>
-        </group>
-        <group>
-            <name>utilities</name>
-            <group>
-                <name>src</name>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\src\debug_util.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\src\fsl_assert.c</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\src\fsl_rtos_abstraction.c</name>
-                </file>
-            </group>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\fsl_assert.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\fsl_rtos_abstraction.h</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\utilities\vector_table_info.h</name>
-            </file>
         </group>
     </group>
     <group>
         <name>startup</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\startup\ar_asm_macros.h</name>
-        </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\..\..\middleware\mcu_bootloader\src\startup\startup.c</name>
         </file>

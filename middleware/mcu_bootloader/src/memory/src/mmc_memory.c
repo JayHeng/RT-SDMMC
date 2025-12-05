@@ -13,12 +13,6 @@
 #include "memory.h"
 #include "fsl_clock.h"
 #include "mmc_memory.h"
-#include "sd_memory.h"
-#include "property.h"
-
-#if BL_FEATURE_GEN_KEYBLOB
-#include "bl_keyblob.h"
-#endif // BL_FEATURE_GEN_KEYBLOB
 
 #if BL_FEATURE_MMC_MODULE
 /*******************************************************************************
@@ -106,10 +100,6 @@ static bool is_write_block_cached(uint32_t blockAddr);
  */
 static status_t get_current_block_count(mmc_card_t *card, uint32_t *partitionBlocks);
 
-#if BL_FEATURE_GEN_KEYBLOB
-static status_t check_update_keyblob_info(void *config);
-#endif // BL_FEATURE_GEN_KEYBLOB
-
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -135,128 +125,6 @@ const external_memory_region_interface_t g_mmcMemoryInterface = {
 /*******************************************************************************
  * Code
  ******************************************************************************/
-#if BL_FEATURE_GEN_KEYBLOB
-status_t check_update_keyblob_info(void *config)
-{
-    status_t status = kStatus_InvalidArgument;
-
-    do
-    {
-        if ((config == NULL) || (g_mmcContext.isConfigured == false))
-        {
-            break;
-        }
-
-        // Try to read Key blob info based on config
-        keyblob_info_t *keyblob_info = (keyblob_info_t *)config;
-        if (keyblob_info->option.B.tag != kKeyBlobInfoOption_Tag)
-        {
-            break;
-        }
-
-        int32_t keyblob_info_type = keyblob_info->option.B.type;
-        if ((keyblob_info_type != kKeyBlobInfoType_Program) && (keyblob_info_type != kKeyBlobInfoType_Update))
-        {
-            break;
-        }
-
-        if (keyblob_info_type == kKeyBlobInfoType_Update)
-        {
-            status = keyblob_update(keyblob_info);
-            if (status != kStatus_Success)
-            {
-                g_mmcContext.has_keyblob = false;
-                break;
-            }
-            g_mmcContext.keyblob_offset = keyblob_info->keyblob_offset;
-            g_mmcContext.has_keyblob = true;
-        }
-        else if (keyblob_info_type == kKeyBlobInfoType_Program)
-        {
-            if (!g_mmcContext.has_keyblob)
-            {
-                break;
-            }
-            uint32_t index = keyblob_info->option.B.image_index;
-            if (index != 0)
-            {
-                break;
-            }
-
-            uint32_t image_start = 0;
-            uint32_t image_max_size = 0;
-            uint32_t block_size;
-            status = mmc_get_property(kExternalMemoryPropertyTag_StartAddress, &image_start);
-            if (status != kStatus_Success)
-            {
-                break;
-            }
-            status = mmc_get_property(kExternalMemoryPropertyTag_MemorySizeInKbytes, &image_max_size);
-            if (status != kStatus_Success)
-            {
-                break;
-            }
-            if (image_max_size > kMMCSize_Max4GB_InKbytes)
-            {
-                image_max_size = 0xFFFFFFFFu;
-            }
-            status = mmc_get_property(kExternalMemoryPropertyTag_BlockSize, &block_size);
-            if (status != kStatus_Success)
-            {
-                break;
-            }
-
-            uint32_t keyblob_offset = g_mmcContext.keyblob_offset;
-            uint32_t keyblob_addr = image_start + keyblob_offset;
-            uint8_t *keyblob_buffer;
-            uint32_t keyblob_size;
-            status = keyblob_get(&keyblob_buffer, &keyblob_size);
-            if (status != kStatus_Success)
-            {
-                break;
-            }
-
-            // Check key blob address range
-            if ((keyblob_size + keyblob_offset) > image_max_size)
-            {
-                status = kStatusMemoryRangeInvalid;
-                break;
-            }
-
-            // Invalid key blob address, key blob must be page size aligned.
-            if (keyblob_addr & (block_size - 1))
-            {
-                status = kStatusMemoryAlignmentError;
-                break;
-            }
-
-#if BL_FEATURE_FLASH_CHECK_CUMULATIVE_WRITE
-            if (!is_erased_memory(keyblob_addr / block_size,
-                                  keyblob_size / block_size + (keyblob_size % block_size ? 1 : 0),
-                                  (g_mmcContext.mmc.extendedCsd.eraseMemoryContent == 0x1) ? kMMCCardErasedPattern1 :
-                                                                                             kMMCCardErasedPattern0))
-            {
-                status = kStatusMemoryCumulativeWrite;
-                break;
-            }
-#endif
-            status = mmc_mem_write(keyblob_addr, keyblob_size, keyblob_buffer);
-            if (status != kStatus_Success)
-            {
-                break;
-            }
-
-            status = mmc_mem_flush();
-            if (status != kStatus_Success)
-            {
-                break;
-            }
-        }
-    } while (0);
-
-    return status;
-}
-#endif // #if BL_FEATURE_GEN_KEYBLOB
 
 status_t mmc_mem_init(void)
 {
@@ -309,27 +177,10 @@ status_t mmc_mem_config(uint32_t *config)
 {
     status_t status = kStatus_Fail;
 
-    uint32_t startAddr = (uint32_t)config;
-    uint32_t endAddr = startAddr + sizeof(mmc_config_t) - 1;
-    // Should check the config is in valid internal space.
-    if ((!is_valid_application_location(startAddr)) || (!is_valid_application_location(endAddr)))
-    {
-        return kStatus_InvalidArgument;
-    }
-
     const mmc_config_t *mmcConfig = (const mmc_config_t *)config;
-#if BL_FEATURE_GEN_KEYBLOB
-    keyblob_info_t *keyblob_info = (keyblob_info_t *)config;
-    if (keyblob_info->option.B.tag == kKeyBlobInfoOption_Tag)
-    {
-        status = check_update_keyblob_info(config);
-        return status;
-    }
-    else
-#endif // BL_FEATURE_GEN_KEYBLOB
 
-        // Check the tag.
-        if (mmcConfig->word0.B.tag != kMMCConfigTag)
+    // Check the tag.
+    if (mmcConfig->word0.B.tag != kMMCConfigTag)
     {
         return kStatus_InvalidArgument;
     }
@@ -382,15 +233,6 @@ status_t mmc_mem_config(uint32_t *config)
             return kStatus_InvalidArgument;
     }
 #endif // #if defined(BL_FEATURE_MMC_MODULE_PERIPHERAL_INSTANCE)
-
-#if BL_FEATURE_SD_MODULE
-    // If this instance has already enabled for sd,
-    // then set sd configuration status to un-configured.
-    if (card->host.base == g_sdContext.sd.host.base)
-    {
-        g_sdContext.isConfigured = false;
-    }
-#endif // #if BL_FEATURE_SD_MODULE
 
     card->hostVoltageWindowVCC = kMMC_VoltageWindows270to360; // Not really used for bootloader.
     card->hostVoltageWindowVCCQ = kMMC_VoltageWindow170to195; // Not really used for bootloader.

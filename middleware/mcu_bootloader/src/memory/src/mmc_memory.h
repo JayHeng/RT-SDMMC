@@ -77,10 +77,6 @@ typedef struct _mmc_mem_context
     bool isWriteBufferValid;
     uint32_t writeBufferOffset;
     uint32_t writeBufferBlockAddr;
-#if BL_FEATURE_GEN_KEYBLOB
-    bool has_keyblob;
-    uint32_t keyblob_offset;
-#endif // BL_FEATURE_GEN_KEYBLOB
 } mmc_mem_context_t;
 
 /*******************************************************************************

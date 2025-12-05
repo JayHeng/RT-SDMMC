@@ -19,83 +19,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Declarations
 ////////////////////////////////////////////////////////////////////////////////
-//! @brief Bit mask for device ID.
-#define DEVICE_ID_MASK 0xff
-//! @brief Bit position of device ID.
-#define DEVICE_ID_SHIFT 0
-//! @brief Bit mask for group ID.
-#define GROUP_ID_MASK 0xf00
-//! @brief Bit position of group ID.
-#define GROUP_ID_SHIFT 8
-
-/*! @brief Construct a memory ID from a given group ID and device ID. */
-#define MAKE_MEMORYID(group, device) \
-    ((((group) << GROUP_ID_SHIFT) & GROUP_ID_MASK) | (((device) << DEVICE_ID_SHIFT) & DEVICE_ID_MASK))
-/*! @brief Get group ID from a given memory ID. */
-#define GROUPID(memoryId) (((memoryId)&GROUP_ID_MASK) >> GROUP_ID_SHIFT)
-
-/*! @brief Get device ID from a given memory ID. */
-#define DEVICEID(memoryId) (((memoryId)&DEVICE_ID_MASK) >> DEVICE_ID_SHIFT)
-
-/*! @brief Memory group definition. */
-enum _bl_memory_groups
-{
-    kGroup_Internal = 0, //!<  Kinetis internal 4G memory region.
-    kGroup_External = 1, //!<  Kinetis external memory region.
-    kGroup_AES_OTP = 2,
-};
 
 /*! @brief Memory device ID definition. */
 enum _bl_memory_id
 {
-    /*  Memory ID bitfiled definition.
-        | 11 | 10 | 9 |    8    |  7   |  6   |  5   |  4  |  3   |  2   |  1  |  0  |
-        |  Reserved   | INT/EXT | Type                     | Sub-Type                |
-        |             | 0: INT  | INT:                     |                         |
-        |             | 1: EXT  | 0: NorFlash0             | 0: Internal Flash(FTFX) |
-        |             |         |                          | 1: QSPI                 |
-        |             |         |                          | 4: IFR                  |
-        |             |         |                          | 8: SEMC                 |
-        |             |         |                          | 9: FlexSPI              |
-        |             |         |                          | A: SPIFI                |
-        |             |         |                          | others: Unused          |
-        |             |         |                          |                         |
-        |             |         | 1: ExecuteOnlyRegion     | 0: Internal Flash(FTFX) |
-        |             |         |                          | others: Unused          |
-        |             |         |                          |                         |
-        |             |         | others: Unused           |                         |
-        |             |         |                          |                         |
-        |             |         | EXT:                     |                         |
-        |             |         | 0: NandFlash             | 0: SEMC                 |
-        |             |         |                          | 1: FlexSPI              |
-        |             |         |                          | others: Unused          |
-        |             |         |                          |                         |
-        |             |         | 1: NorFlash/EEPROM       | 0: LPSPI                |
-        |             |         |                          | 1: LPI2C                |
-        |             |         |                          | others: Unused          |
-        |             |         |                          |                         |
-        |             |         | 2: SD/SDHC/SDXC/MMC/eMMC | 0: uSDHC SD             |
-        |             |         |                          | 1: uSDHC MMC            |
-        |             |         |                          | others: Unused          |
-        |             |         | others: Unused           |                         |
-
-        INT : Internal 4G memory, including internal memory modules, and XIP external memory modules.
-        EXT : Non-XIP external memory modules.
-    */
-    kMemoryInternal = MAKE_MEMORYID(kGroup_Internal, 0),  // Internal memory (include all on chip memory)
-    kMemoryQuadSpi0 = MAKE_MEMORYID(kGroup_Internal, 1),  // Qsuad SPI memory 0
-    kMemoryIFR0_Fuse = MAKE_MEMORYID(kGroup_Internal, 4), // Nonvolatile information register 0. Only used by SB loader.
-    kMemorySemcNor = MAKE_MEMORYID(kGroup_Internal, 8),   // SEMC Nor memory
-    kMemoryFlexSpiNor = MAKE_MEMORYID(kGroup_Internal, 9),          // Flex SPI Nor memory
-    kMemorySpifiNor = MAKE_MEMORYID(kGroup_Internal, 0xA),          // SPIFI Nor memory
-    kMemoryFlashExecuteOnly = MAKE_MEMORYID(kGroup_Internal, 0x10), // Execute-only region on internal Flash
-
-    kMemorySemcNand = MAKE_MEMORYID(kGroup_External, 0),        // SEMC NAND memory
-    kMemorySpiNand = MAKE_MEMORYID(kGroup_External, 1),         // SPI NAND memory
-    kMemorySpiNorEeprom = MAKE_MEMORYID(kGroup_External, 0x10), // SPI NOR/EEPROM memory
-    kMemoryI2cNorEeprom = MAKE_MEMORYID(kGroup_External, 0x11), // I2C NOR/EEPROM memory
-    kMemorySDCard = MAKE_MEMORYID(kGroup_External, 0x20),       // eSD, SD, SDHC, SDXC memory Card
-    kMemoryMMCCard = MAKE_MEMORYID(kGroup_External, 0x21),      // MMC, eMMC memory Card
+    kMemoryMMCCard = 1,      // MMC, eMMC memory Card
     //
 };
 
@@ -288,9 +216,6 @@ extern const memory_region_interface_t g_deviceMemoryInterface;
 
 
 #if BL_FEATURE_EXPAND_MEMORY
-#if BL_FEATURE_SD_MODULE
-extern const external_memory_region_interface_t g_sdMemoryInterface;
-#endif
 #if BL_FEATURE_MMC_MODULE
 extern const external_memory_region_interface_t g_mmcMemoryInterface;
 #endif
