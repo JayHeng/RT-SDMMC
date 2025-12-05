@@ -12,7 +12,7 @@
 #include "bootloader.h"
 #include "sdmmc_init.h"
 #include "fsl_mmc.h"
-#include "lpc_gpio/fsl_gpio.h"
+#include "fsl_gpio.h"
 #if BL_FEATURE_MMC_MODULE
 #include "mmc_memory.h"
 #endif
