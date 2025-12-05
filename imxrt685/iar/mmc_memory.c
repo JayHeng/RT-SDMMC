@@ -8,7 +8,7 @@
 */
 
 #include "bootloader_common.h"
-#include "bootloader.h"
+#include "property.h"
 #include "fsl_device_registers.h"
 #include "memory.h"
 #include "fsl_clock.h"

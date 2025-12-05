@@ -48,8 +48,6 @@ static void bootloader_run(void);
 
 int main(void);
 
-extern const external_memory_region_interface_t g_mmcMemoryInterface;
-
 ////////////////////////////////////////////////////////////////////////////////
 // Variables
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +55,15 @@ extern const external_memory_region_interface_t g_mmcMemoryInterface;
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
+
+static void bootloader_var_init(void)
+{
+    g_externalMemoryMap[0].memoryId = kMemoryMMCCard;
+    g_externalMemoryMap[0].status = kStatus_Success;
+    g_externalMemoryMap[0].basicUnitCount = 0;
+    g_externalMemoryMap[0].basicUnitSize = 512;
+    g_externalMemoryMap[0].memoryInterface = &g_mmcMemoryInterface;
+}
 
 
 //! @brief Initialize the bootloader and peripherals.
@@ -70,6 +77,8 @@ extern const external_memory_region_interface_t g_mmcMemoryInterface;
 //! jumps directly to the user application in flash.
 static void bootloader_init(void)
 {
+    bootloader_var_init();
+
     // Init pinmux and other hardware setup.
     init_hardware();
 

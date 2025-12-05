@@ -1134,9 +1134,6 @@
             <name>$PROJ_DIR$\bl_usdhc.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\bootloader.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\bootloader_common.h</name>
         </file>
         <file>
@@ -1207,9 +1204,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\memory.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\memory_map_MIMXRT685S.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\microseconds.h</name>

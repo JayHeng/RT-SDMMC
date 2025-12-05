@@ -65,15 +65,6 @@ typedef struct _external_memory_map_entry
     const external_memory_region_interface_t *memoryInterface;
 } external_memory_map_entry_t;
 
-enum _external_memorymap_constants
-{
-    kIndexStart = 0,
-    // Never add index for external memory map.
-    // Because external memories don't have fixed indexes,
-    // and are changed by bootloader configuration.
-    // Please call find_external_map_index() to get the correct index.
-};
-
 ////////////////////////////////////////////////////////////////////////////////
 // Externs
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,12 +83,6 @@ extern const external_memory_region_interface_t g_mmcMemoryInterface;
 extern "C"
 {
 #endif // __cplusplus
-
-    //! @brief Find an external map entry that matches address and length.
-    status_t find_external_map_entry(uint32_t address,
-                                     uint32_t length,
-                                     uint32_t memory_id,
-                                     const external_memory_map_entry_t **map);
 
     //! @brief Find an external map index that matches the given memory id.
     status_t find_external_map_index(uint32_t memoryId, uint32_t *index);

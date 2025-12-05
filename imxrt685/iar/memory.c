@@ -20,52 +20,16 @@
 // Variables
 ////////////////////////////////////////////////////////////////////////////////
 
-//! @brief This variable is used to do flush operation, it is bind to write operation.
-
+external_memory_map_entry_t g_externalMemoryMap[] = {
+    // MMC card memory
+    { 0 },
+    // Terminator
+    { 0 } 
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Code
 ////////////////////////////////////////////////////////////////////////////////
-
-// See memory.h for documentation on this function.
-status_t find_external_map_entry(uint32_t address,
-                                 uint32_t length,
-                                 uint32_t memory_id,
-                                 const external_memory_map_entry_t **map)
-{
-    status_t status = kStatusMemoryRangeInvalid;
-
-    // Set starting entry.
-    assert(map);
-    if (map)
-    {
-        *map = &g_externalMemoryMap[0];
-    }
-
-    // Scan memory map array looking for a match.
-    while ((length > 0) && map && *map)
-    {
-        if (((*map)->memoryId == 0) && ((*map)->status == 0) && ((*map)->basicUnitCount == 0) &&
-            ((*map)->basicUnitSize == 0) && ((*map)->memoryInterface == NULL))
-        {
-            break;
-        }
-
-        // Check if the memory id is matched.
-        if (memory_id == (*map)->memoryId)
-        {
-            // Check that the length fits in this entry's address range.
-            if (((uint64_t)address + length) <= ((uint64_t)(*map)->basicUnitCount * (*map)->basicUnitSize))
-            {
-                status = kStatus_Success;
-            }
-            break;
-        }
-        ++(*map);
-    }
-
-    return status;
-}
 
 status_t find_external_map_index(uint32_t memoryId, uint32_t *index)
 {
