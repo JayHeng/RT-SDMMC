@@ -26,8 +26,11 @@
 // Prototypes
 ////////////////////////////////////////////////////////////////////////////////
 
+#define EMMC_RW_SELFTEST (0)
+
 #define BOARD_RT1170_CUSTOMER_2nd_USDHC_FEMDME008G    (0)
-#define BOARD_RT600_NXPVAL_1st_USDHC_THGBMNG5D1LBAIT  (1)
+#define BOARD_RT600_NXPVAL_1st_USDHC_THGBMNG5D1LBAIT  (0)
+#define BOARD_RT600_CUSTOMER_1st_USDHC_MX52LM04A11    (1)
 
 #if BOARD_RT1170_CUSTOMER_2nd_USDHC_FEMDME008G
 #define MMC_CFG_OPTION0  (0xc0001200)
@@ -35,6 +38,11 @@
 #define APP_EXEC_START   (0x2000)
 #define APP_LENGTH       (0x6000)
 #elif BOARD_RT600_NXPVAL_1st_USDHC_THGBMNG5D1LBAIT
+#define MMC_CFG_OPTION0  (0xC0010100)
+#define MMC_CFG_OPTION1  (0x00000000)
+#define APP_EXEC_START   (0x80000)
+#define APP_LENGTH       (0x6000)
+#elif BOARD_RT600_CUSTOMER_1st_USDHC_MX52LM04A11
 #define MMC_CFG_OPTION0  (0xC0010100)
 #define MMC_CFG_OPTION1  (0x00000000)
 #define APP_EXEC_START   (0x80000)
@@ -188,6 +196,10 @@ static void bootloader_init(void)
     g_bootloaderContext.propertyInterface->init();
 }
 
+#if EMMC_RW_SELFTEST
+uint8_t s_emmcTestBuffer[512];
+#endif
+
 static void bootloader_run(void)
 {
     status_t status = kStatus_InvalidArgument;
@@ -201,6 +213,13 @@ static void bootloader_run(void)
     status = mem_config(kMemoryMMCCard, (uint32_t *)&mmcConfig);
     if (status == kStatus_Success)
     {
+#if EMMC_RW_SELFTEST
+        for (uint32_t i = 0; i < sizeof(s_emmcTestBuffer); i++)
+        {
+            s_emmcTestBuffer[i] = i & 0xFF;
+        }
+        status = mem_write(APP_EMMC_START, sizeof(s_emmcTestBuffer), s_emmcTestBuffer, kMemoryMMCCard);
+#endif
         status = mem_read(APP_EMMC_START, APP_LENGTH, (uint8_t *)APP_EXEC_START, kMemoryMMCCard);
         if (status == kStatus_Success)
         {
