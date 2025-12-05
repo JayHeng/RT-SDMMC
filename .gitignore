@@ -19,6 +19,9 @@
 *.lst
 *.elf
 *.bin
+*/*/settings/
+*/*/release/
+
 */*/*/*/*/settings/
 */*/*/*/*/debug/
 */*/*/*/*/release/
