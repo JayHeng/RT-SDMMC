@@ -1251,6 +1251,9 @@
             <name>$PROJ_DIR$\tz_context.h</name>
         </file>
     </group>
+    <file>
+        <name>$PROJ_DIR$\fsl_common_arm.c</name>
+    </file>
     <projectSettings>
         <general>
             <resolveSourceForBinaries>true</resolveSourceForBinaries>
