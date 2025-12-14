@@ -84,9 +84,6 @@ static void bootloader_init(void)
 
     // Configure clocks.
     configure_clocks(kClockOption_EnterBootloader);
-
-    // Start the lifetime counter
-    microseconds_init();
     
     g_mmcMemoryInterface.init();
 }

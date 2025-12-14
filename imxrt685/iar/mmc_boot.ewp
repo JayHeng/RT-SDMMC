@@ -1206,12 +1206,6 @@
             <name>$PROJ_DIR$\memory.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\microseconds.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\microseconds_sysclk.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\MIMXRT685S_cm33.h</name>
         </file>
         <file>
