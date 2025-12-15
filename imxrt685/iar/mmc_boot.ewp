@@ -1173,16 +1173,16 @@
             <name>$PROJ_DIR$\fsl_gpio.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\fsl_mmc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\fsl_mmc.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\fsl_reset.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\fsl_reset.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\fsl_sd.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\fsl_sd.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\fsl_sdmmc_common.c</name>
@@ -1215,16 +1215,16 @@
             <name>$PROJ_DIR$\MIMXRT685S_cm33_features.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\mmc_memory.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\mmc_memory.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\mpu_armv8.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\property.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\sd_memory.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\sd_memory.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\sdmmc_config_MIMXRT685S.c</name>
