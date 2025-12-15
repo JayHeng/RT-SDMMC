@@ -10,9 +10,9 @@
 #include "bootloader_common.h"
 #include "fsl_device_registers.h"
 #include "sdmmc_init.h"
-#include "fsl_mmc.h"
+#include "fsl_sd.h"
 #include "fsl_gpio.h"
-#include "mmc_memory.h"
+#include "sd_memory.h"
 /*******************************************************************************
  * Definitons
  ******************************************************************************/
@@ -93,24 +93,17 @@ void usdhc_vselect_init(USDHC_Type *base)
     }
 }
 
-void mmc_pinmux_config(USDHC_Type *base, mmc_data_bus_width_t busWidth)
+void sd_pinmux_config(USDHC_Type *base, sd_data_bus_width_t busWidth)
 {
     if (base == BOARD_USDHC0_BASEADDR)
     {
         switch (busWidth)
         {
-            case kMMC_DataBusWidth8bitDDR:
-            case kMMC_DataBusWidth8bit:
-                IOPAD_Set(BOARD_USDHC0_DATA4_IOPAD, usdhc_data_pin_settings);
-                IOPAD_Set(BOARD_USDHC0_DATA5_IOPAD, usdhc_data_pin_settings);
-                IOPAD_Set(BOARD_USDHC0_DATA6_IOPAD, usdhc_data_pin_settings);
-                IOPAD_Set(BOARD_USDHC0_DATA7_IOPAD, usdhc_data_pin_settings);
-            case kMMC_DataBusWidth4bitDDR:
-            case kMMC_DataBusWidth4bit:
+            case kSD_DataBusWidth4Bit:
                 IOPAD_Set(BOARD_USDHC0_DATA1_IOPAD, usdhc_data_pin_settings);
                 IOPAD_Set(BOARD_USDHC0_DATA2_IOPAD, usdhc_data_pin_settings);
                 IOPAD_Set(BOARD_USDHC0_DATA3_IOPAD, usdhc_data_pin_settings);
-            case kMMC_DataBusWidth1bit:
+            case kSD_DataBusWidth1Bit:
             default:
                 IOPAD_Set(BOARD_USDHC0_CMD_IOPAD, usdhc_cmd_pin_settings);
                 IOPAD_Set(BOARD_USDHC0_CLK_IOPAD, usdhc_clk_pin_settings);
@@ -121,18 +114,11 @@ void mmc_pinmux_config(USDHC_Type *base, mmc_data_bus_width_t busWidth)
     {
         switch (busWidth)
         {
-            case kMMC_DataBusWidth8bitDDR:
-            case kMMC_DataBusWidth8bit:
-                IOPAD_Set(BOARD_USDHC1_DATA4_IOPAD, usdhc_data_pin_settings);
-                IOPAD_Set(BOARD_USDHC1_DATA5_IOPAD, usdhc_data_pin_settings);
-                IOPAD_Set(BOARD_USDHC1_DATA6_IOPAD, usdhc_data_pin_settings);
-                IOPAD_Set(BOARD_USDHC1_DATA7_IOPAD, usdhc_data_pin_settings);
-            case kMMC_DataBusWidth4bitDDR:
-            case kMMC_DataBusWidth4bit:
+            case kSD_DataBusWidth4Bit:
                 IOPAD_Set(BOARD_USDHC1_DATA1_IOPAD, usdhc_data_pin_settings);
                 IOPAD_Set(BOARD_USDHC1_DATA2_IOPAD, usdhc_data_pin_settings);
                 IOPAD_Set(BOARD_USDHC1_DATA3_IOPAD, usdhc_data_pin_settings);
-            case kMMC_DataBusWidth1bit:
+            case kSD_DataBusWidth1Bit:
             default:
                 IOPAD_Set(BOARD_USDHC1_CMD_IOPAD, usdhc_cmd_pin_settings);
                 IOPAD_Set(BOARD_USDHC1_CLK_IOPAD, usdhc_clk_pin_settings);
@@ -141,9 +127,8 @@ void mmc_pinmux_config(USDHC_Type *base, mmc_data_bus_width_t busWidth)
     }
 }
 
-status_t get_mmc_default_configuration(mmc_card_t *card)
+status_t get_sd_default_configuration(sd_card_t *card)
 {
-    // Used by memory interface. For LPCNext0, always failed.
     status_t status = kStatus_Fail;
     return status;
 }

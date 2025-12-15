@@ -19,6 +19,31 @@
 /******************************************************************************
  * Definitions.
  *****************************************************************************/
+
+/*! @brief Configuration structure used for SD memory. */
+typedef struct _sd_config
+{
+    union {
+        struct
+        {
+            uint32_t instance : 4;
+            uint32_t rsv0 : 4;
+            uint32_t bus_width : 1;
+            uint32_t tuningStart : 3;
+            uint32_t timing_interface : 3;
+            uint32_t rsv1 : 4;
+            uint32_t enablePowerCycle : 1;
+            uint32_t powerUpTime : 1;
+            uint32_t tuningStep : 2;
+            uint32_t powerPolarity : 1;
+            uint32_t powerDownTime : 2;
+            uint32_t rsv2 : 2;
+            uint32_t tag : 4;
+        } B;
+        uint32_t U;
+    } word0;
+} sd_config_t;
+
 /*! @brief Context structure used for SD memory. */
 typedef struct _sd_mem_context
 {
@@ -29,10 +54,6 @@ typedef struct _sd_mem_context
     bool isWriteBufferValid;
     uint32_t writeBufferOffset;
     uint32_t writeBufferBlockAddr;
-#if BL_FEATURE_GEN_KEYBLOB
-    bool has_keyblob;
-    uint32_t keyblob_offset;
-#endif // BL_FEATURE_GEN_KEYBLOB
 } sd_mem_context_t;
 
 /*******************************************************************************

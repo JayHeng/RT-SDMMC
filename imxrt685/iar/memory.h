@@ -22,7 +22,7 @@
 /*! @brief Memory device ID definition. */
 enum _bl_memory_id
 {
-    kMemoryMMCCard = 1,      // MMC, eMMC memory Card
+    kMemorySDCard = 1,      // eSD, SD, SDHC, SDXC memory Card
 };
 
 //! @brief Memory interface status codes.
@@ -71,7 +71,7 @@ typedef struct _external_memory_map_entry
 
 extern external_memory_map_entry_t g_externalMemoryMap[];
 
-extern const external_memory_region_interface_t g_mmcMemoryInterface;
+extern const external_memory_region_interface_t g_sdMemoryInterface;
 
 //@}
 
@@ -89,12 +89,12 @@ extern "C"
 
     //@}
 
-    //! @name MMC CARD
+    //! @name SD CARD
     //@{
-    //! @brief Erase all MMC memory
-    status_t mmc_mem_erase_all(void);
-    //! @brief Get Property from MMC card driver.
-    status_t mmc_get_property(uint32_t whichProperty, uint32_t *value);
+    //! @brief Erase all SD memory
+    status_t sd_mem_erase_all(void);
+    //! @brief Get Property from SD card driver.
+    status_t sd_get_property(uint32_t whichProperty, uint32_t *value);
 
 
 #if defined(__cplusplus)

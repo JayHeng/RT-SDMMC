@@ -992,9 +992,10 @@ static status_t SD_BL_ApplicationSendOperationCondition(sd_card_t *card, uint32_
     command.argument = argument;
     command.responseType = kCARD_ResponseTypeR3;
 
-    uint64_t timeoutTicks = microseconds_get_ticks() + microseconds_convert_to_ticks(SDMMC_WAIT_BUSY_TIMEOUT_US);
+    //uint64_t timeoutTicks = microseconds_get_ticks() + microseconds_convert_to_ticks(SDMMC_WAIT_BUSY_TIMEOUT_US);
+    uint32_t delay50usCnt = SDMMC_WAIT_BUSY_TIMEOUT_US / 50;
 
-    while ((i--) && (microseconds_get_ticks() < timeoutTicks))
+    while ((i--) && (delay50usCnt > 0))
     {
         error = SD_SendApplicationCmd(card, 0U);
         if (kStatus_Success != error)
@@ -1027,6 +1028,8 @@ static status_t SD_BL_ApplicationSendOperationCondition(sd_card_t *card, uint32_
             break;
         }
         error = kStatus_Timeout;
+        SDK_DelayAtLeastUs(50, SystemCoreClock);
+        delay50usCnt--;
     }
 
     return error;
@@ -1838,11 +1841,11 @@ status_t SD_BL_CardInit(sd_card_t *card)
         /* card power off */
         SDMMCHOST_SET_SD_RESET(card->host.base, card->userConfig.powerPolarity);
         /* Delay some time to make card stable. */
-        microseconds_delay(card->userConfig.powerDownDelay_US);
+        SDK_DelayAtLeastUs(card->userConfig.powerDownDelay_US, SystemCoreClock);
         /* card power on */
         SDMMCHOST_SET_SD_RESET(card->host.base, !card->userConfig.powerPolarity);
         /* Delay some time to make card stable. */
-        microseconds_delay(card->userConfig.powerUpDelay_US);
+        SDK_DelayAtLeastUs(card->userConfig.powerUpDelay_US, SystemCoreClock);
     }
 
     if (isUHSImode)
